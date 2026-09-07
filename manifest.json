@@ -1,0 +1,16 @@
+{
+  "name": "Nabz-Tech Eats",
+  "short_name": "Nabz-Eats",
+  "description": "Order food online",
+  "start_url": "/restaurant.html",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#e67e22",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
