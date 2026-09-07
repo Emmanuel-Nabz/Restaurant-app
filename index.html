@@ -498,7 +498,7 @@
         }
 
         // ============================================================
-        // 8. CHECKOUT (WITH NAME, PHONE, ADDRESS)
+        // 8. CHECKOUT (FORMATTED MESSAGE)
         // ============================================================
         function checkout() {
             if (cart.length === 0) {
@@ -529,23 +529,38 @@
                 return;
             }
 
-            // Build WhatsApp message
-            var message = "🍕 New Order from Nabz-Tech Eats!";
-            
-            // Customer details
-            message += "👤 Name: " + name + "";
+            // ===== BUILD CLEAN MESSAGE =====
+            var message = "🍕 NABZ-TECH EATS - NEW ORDER ";
+            message += "═══════════════════════════";
+
+            // Customer Details
+            message += "👤 Customer: " + name + "";
             message += "📱 Phone: " + phone + "";
             message += "📍 Address: " + address + "";
-            
+
+            message += "───────────────────────────";
+            message += "🛒 ORDER SUMMARY ";
+            message += "───────────────────────────";
+
             // Order items
-            message += "Order Summary:";
             var total = 0;
+            var itemCount = 0;
             for (var i = 0; i < cart.length; i++) {
                 var itemTotal = cart[i].price * cart[i].quantity;
                 total += itemTotal;
-                message += "✅ " + cart[i].quantity + " " + cart[i].name + " - BD " + itemTotal.toFixed(2) + "";
+                itemCount += cart[i].quantity;
+                message += cart[i].quantity + "x " + cart[i].name + "";
+                message += "   BD " + itemTotal.toFixed(2) + "";
             }
-            message += "Total: BD " + total.toFixed(2) + "";
+
+            message += "───────────────────────────";
+            message += "📦 Total Items: " + itemCount + "";
+            message += "💰 Total Amount: BD " + total.toFixed(2) + "";
+            message += "───────────────────────────";
+
+            message += "⏰ Order Time: " + new Date().toLocaleString() + "";
+            message += "✅ Thank you for your order!";
+            message += "📞 We will confirm shortly.";
 
             // Send to WhatsApp
             var whatsappNumber = '97333310359';
