@@ -251,7 +251,7 @@
                 name: "Burgers",
                 icon: "🍔",
                 items: [
-                    { id: 1, name: "Classic Burger", desc: "Beef patty, lettuce, tomato, cheese", price: 2.50, Image: "bagar.jpg" },
+                    { id: 1, name: "Classic Burger", desc: "Beef patty, lettuce, tomato, cheese", price: 2.50, image: "bagar.jpg" },
                     { id: 2, name: "Cheese Burger", desc: "Double cheese, caramelized onions", price: 3.00 },
                     { id: 3, name: "Chicken Burger", desc: "Grilled chicken, garlic mayo", price: 2.75 },
                     { id: 4, name: "Veggie Burger", desc: "Plant-based patty, avocado", price: 3.25 }
@@ -317,40 +317,49 @@
         // 3. RENDER MENU
         // ============================================================
         function renderMenu() {
-            const container = document.getElementById('menuContainer');
-            if (!container) {
-                console.error('menuContainer not found!');
-                return;
+    const container = document.getElementById('menuContainer');
+    if (!container) {
+        console.error('menuContainer not found!');
+        return;
+    }
+    container.innerHTML = '';
+
+    menuCategories.forEach(function(category) {
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category.icon + ' ' + category.name;
+        container.appendChild(title);
+
+        const grid = document.createElement('div');
+        grid.className = 'menu-grid';
+
+        category.items.forEach(function(item) {
+            const div = document.createElement('div');
+            div.className = 'menu-item';
+            div.id = 'item-' + item.id;
+
+            // ==== FIX: Use image if available, otherwise use emoji ====
+            var imageHtml = '';
+            if (item.image) {
+                imageHtml = '<img src="' + item.image + '" alt="' + item.name + '" style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; margin-bottom: 8px;">';
+            } else {
+                imageHtml = '<div class="icon">' + category.icon + '</div>';
             }
-            container.innerHTML = '';
 
-            menuCategories.forEach(function(category) {
-                const title = document.createElement('div');
-                title.className = 'category-title';
-                title.textContent = category.icon + ' ' + category.name;
-                container.appendChild(title);
+            div.innerHTML = 
+                imageHtml +
+                '<h3>' + item.name + '</h3>' +
+                '<div class="desc">' + item.desc + '</div>' +
+                '<div class="price">BD ' + item.price.toFixed(2) + '</div>' +
+                '<button class="add-btn" onclick="addToCart(' + item.id + ')">' +
+                '<i class="fas fa-plus"></i> Add' +
+                '</button>';
+            grid.appendChild(div);
+        });
 
-                const grid = document.createElement('div');
-                grid.className = 'menu-grid';
-
-                category.items.forEach(function(item) {
-                    const div = document.createElement('div');
-                    div.className = 'menu-item';
-                    div.id = 'item-' + item.id;
-                    div.innerHTML = 
-                        '<div class="icon">' + category.icon + '</div>' +
-                        '<h3>' + item.name + '</h3>' +
-                        '<div class="desc">' + item.desc + '</div>' +
-                        '<div class="price">BD ' + item.price.toFixed(2) + '</div>' +
-                        '<button class="add-btn" onclick="addToCart(' + item.id + ')">' +
-                        '<i class="fas fa-plus"></i> Add' +
-                        '</button>';
-                    grid.appendChild(div);
-                });
-
-                container.appendChild(grid);
-            });
-        }
+        container.appendChild(grid);
+    });
+}
 
         // ============================================================
         // 4. ADD TO CART
