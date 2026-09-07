@@ -527,69 +527,157 @@
         // 8. CHECKOUT
         // ============================================================
         function checkout() {
-            if (cart.length === 0) {
-                alert('🛒 Your cart is empty! Add some items first.');
-                return;
-            }
+    if (cart.length === 0) {
+        alert('🛒 Your cart is empty! Add some items first.');
+        return;
+    }
 
-            var name = document.getElementById('customerName').value;
-            var phone = document.getElementById('customerPhone').value;
-            var address = document.getElementById('deliveryAddress').value;
-            var payment = document.getElementById('paymentMethod').value;
+    var name = document.getElementById('customerName').value;
+    var phone = document.getElementById('customerPhone').value;
+    var address = document.getElementById('deliveryAddress').value;
+    var payment = document.getElementById('paymentMethod').value;
 
-            if (!name) {
-                alert('👤 Please enter your full name.');
-                document.getElementById('customerName').focus();
-                return;
-            }
+    if (!name) {
+        alert('👤 Please enter your full name.');
+        document.getElementById('customerName').focus();
+        return;
+    }
 
-            if (!phone) {
-                alert('📱 Please enter your phone number.');
-                document.getElementById('customerPhone').focus();
-                return;
-            }
+    if (!phone) {
+        alert('📱 Please enter your phone number.');
+        document.getElementById('customerPhone').focus();
+        return;
+    }
 
-            if (!address) {
-                alert('📍 Please enter your delivery address.');
-                document.getElementById('deliveryAddress').focus();
-                return;
-            }
+    if (!address) {
+        alert('📍 Please enter your delivery address.');
+        document.getElementById('deliveryAddress').focus();
+        return;
+    }
 
-            var message = "🍕 NABZ-TECH EATS - NEW ORDER ";
-            message += "═══════════════════════════";
+    // ===== BUILD ORDER SUMMARY =====
+    var orderSummary = "";
+    var total = 0;
+    var itemCount = 0;
+    for (var i = 0; i < cart.length; i++) {
+        var itemTotal = cart[i].price * cart[i].quantity;
+        total += itemTotal;
+        itemCount += cart[i].quantity;
+        orderSummary += cart[i].quantity + "x " + cart[i].name + " - BD " + itemTotal.toFixed(2) + "\n";
+    }
 
-            message += "👤 Customer: " + name + "";
-            message += "📱 Phone: " + phone + "";
-            message += "📍 Address: " + address + "";
-            message += "💳 Payment: " + payment + "";
+    // ===== SEND TO EMAIL VIA FORMSUBMIT =====
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://formsubmit.co/makemmy87@yahoo.com';
 
-            message += "───────────────────────────";
-            message += "🛒 ORDER SUMMARY ";
-            message += "───────────────────────────";
+    // Customer details
+    var fields = {
+        '_subject': '🍕 New Order from Nabz-Tech Eats',
+        'Name': name,
+        'Phone': phone,
+        'Address': address,
+        'Payment Method': payment,
+        'Order Summary': orderSummary,
+        'Total Items': itemCount,
+        'Total Amount': 'BD ' + total.toFixed(2),
+        '_captcha': 'false'
+    };
 
-            var total = 0;
-            var itemCount = 0;
-            for (var i = 0; i < cart.length; i++) {
-                var itemTotal = cart[i].price * cart[i].quantity;
-                total += itemTotal;
-                itemCount += cart[i].quantity;
-                message += cart[i].quantity + "x " + cart[i].name + "";
-                message += "   BD " + itemTotal.toFixed(2) + "";
-            }
+    for (var key in fields) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = fields[key];
+        form.appendChild(input);
+    }
 
-            message += "───────────────────────────";
-            message += "📦 Total Items: " + itemCount + "";
-            message += "💰 Total Amount: BD " + total.toFixed(2) + "";
-            message += "───────────────────────────";
+    document.body.appendChild(form);
+    form.submit();
 
-            message += "⏰ Order Time: " + new Date().toLocaleString() + "";
-            message += "✅ Thank you for your order!";
-            message += "📞 We will confirm shortly.";
+    // ===== SHOW CONFIRMATION MESSAGE =====
+    var confirmation = document.createElement('div');
+    confirmation.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        animation: fadeIn 0.5s;
+    `;
 
-            var whatsappNumber = '97333310359';
-            var url = 'https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(message);
-            window.open(url, '_blank');
+    confirmation.innerHTML = `
+        <div style="
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: bounceIn 0.5s;
+        ">
+            <div style="font-size: 4em; margin-bottom: 15px;">✅</div>
+            <h2 style="color: #27ae60; margin-bottom: 10px;">Order Confirmed!</h2>
+            <p style="color: #555; margin-bottom: 20px;">
+                Thank you, <strong>${name}</strong>!<br>
+                Your order has been received.
+            </p>
+            <div style="background: #f8f9fa; border-radius: 10px; padding: 15px; text-align: left; margin-bottom: 20px;">
+                <p style="font-size: 0.9em; color: #7f8c8d; margin-bottom: 5px;">📦 Order Summary</p>
+                <p style="font-size: 0.9em; color: #2c3e50;">${orderSummary.replace(/\n/g, '<br>')}</p>
+                <p style="font-weight: bold; margin-top: 10px; color: #27ae60;">Total: BD ${total.toFixed(2)}</p>
+            </div>
+            <p style="color: #7f8c8d; font-size: 0.85em; margin-bottom: 20px;">
+                We will confirm your order shortly via WhatsApp.
+            </p>
+            <button onclick="closeConfirmation()" style="
+                background: #3498db;
+                color: white;
+                border: none;
+                padding: 12px 40px;
+                border-radius: 30px;
+                font-size: 1em;
+                font-weight: bold;
+                cursor: pointer;
+                transition: background 0.3s;
+            ">OK</button>
+        </div>
+    `;
+
+    // Add animation styles
+    var style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    document.body.appendChild(confirmation);
+
+    // Clear cart after order
+    cart = [];
+    renderCart();
+}
+
+// ===== CLOSE CONFIRMATION =====
+function closeConfirmation() {
+    var confirmation = document.querySelector('div[style*="position: fixed; top: 0; left: 0; width: 100%; height: 100%;"]');
+    if (confirmation) {
+        confirmation.remove();
+    }
+}
 
         // ============================================================
         // 9. START
