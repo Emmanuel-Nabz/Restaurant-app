@@ -18,8 +18,6 @@
             max-width: 900px;
             margin: 0 auto;
         }
-
-        /* ===== HEADER ===== */
         .app-header {
             text-align: center;
             padding: 30px 0 20px;
@@ -34,8 +32,6 @@
             color: #7f8c8d;
             font-size: 1.1em;
         }
-
-        /* ===== CATEGORY TITLE ===== */
         .category-title {
             font-size: 1.5em;
             color: #2c3e50;
@@ -46,8 +42,6 @@
             align-items: center;
             gap: 10px;
         }
-
-        /* ===== MENU GRID ===== */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -102,14 +96,6 @@
         .menu-item .add-btn:hover {
             background: #2980b9;
         }
-        .menu-item .add-btn:active {
-            transform: scale(0.96);
-        }
-        .menu-item .add-btn.added {
-            background: #27ae60;
-        }
-
-        /* ===== CART ===== */
         .cart-section {
             background: white;
             border-radius: 12px;
@@ -154,10 +140,6 @@
             cursor: pointer;
             font-weight: bold;
             margin-left: 12px;
-            transition: background 0.2s;
-        }
-        .cart-item .remove-btn:hover {
-            background: #c0392b;
         }
         .cart-total {
             display: flex;
@@ -183,9 +165,6 @@
         }
         .checkout-btn:hover {
             background: #1da851;
-        }
-        .checkout-btn:active {
-            transform: scale(0.98);
         }
         .empty-cart {
             color: #95a5a6;
@@ -213,8 +192,6 @@
         .clear-cart-btn:hover {
             background: #c0392b;
         }
-
-        /* ===== FOOTER ===== */
         .footer {
             text-align: center;
             margin-top: 40px;
@@ -223,34 +200,23 @@
             border-top: 1px solid #ecf0f1;
             padding-top: 20px;
         }
-
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 600px) {
             .app-header h1 { font-size: 1.8em; }
             .menu-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
             .menu-item { padding: 12px; }
             .menu-item .icon { font-size: 2.2em; }
-            .cart-section { padding: 15px; }
-            .category-title { font-size: 1.2em; }
-        }
-        @media (max-width: 400px) {
-            .menu-grid { grid-template-columns: 1fr 1fr; }
-            .menu-item .desc { font-size: 0.7em; min-height: 30px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ===== HEADER ===== -->
     <div class="app-header">
         <h1>🍕 Nabz-Tech Eats</h1>
         <p>Order your favorite food online — delivered to your door!</p>
     </div>
 
-    <!-- ===== MENU CONTAINER ===== -->
     <div id="menuContainer"></div>
 
-    <!-- ===== CART ===== -->
     <div class="cart-section">
         <h2>
             <i class="fas fa-shopping-cart"></i>
@@ -272,18 +238,17 @@
         </button>
     </div>
 
-    <!-- ===== FOOTER ===== -->
     <div class="footer">
         <p>&copy; 2026 Nabz-Tech Eats. All rights reserved.</p>
     </div>
 
     <script>
         // ============================================================
-        // 1. FULL MENU WITH CATEGORIES
+        // 1. FULL MENU WITH CATEGORIES (CLEAN VERSION)
         // ============================================================
         const menuCategories = [
             {
-                name: "🍔 Burgers",
+                name: "Burgers",
                 icon: "🍔",
                 items: [
                     { id: 1, name: "Classic Burger", desc: "Beef patty, lettuce, tomato, cheese", price: 2.50 },
@@ -293,7 +258,7 @@
                 ]
             },
             {
-                name: "🍕 Pizzas",
+                name: "Pizzas",
                 icon: "🍕",
                 items: [
                     { id: 5, name: "Margherita Pizza", desc: "Tomato, mozzarella, basil", price: 3.00 },
@@ -303,7 +268,7 @@
                 ]
             },
             {
-                name: "🌯 Wraps & Sandwiches",
+                name: "Wraps & Sandwiches",
                 icon: "🌯",
                 items: [
                     { id: 9, name: "Chicken Wrap", desc: "Grilled chicken, veggies, garlic sauce", price: 2.00 },
@@ -312,7 +277,7 @@
                 ]
             },
             {
-                name: "🍟 Sides",
+                name: "Sides",
                 icon: "🍟",
                 items: [
                     { id: 12, name: "French Fries", desc: "Crispy golden fries", price: 1.00 },
@@ -322,7 +287,7 @@
                 ]
             },
             {
-                name: "🥤 Drinks",
+                name: "Drinks",
                 icon: "🥤",
                 items: [
                     { id: 16, name: "Coca-Cola", desc: "Classic cold drink", price: 1.00 },
@@ -333,7 +298,7 @@
                 ]
             },
             {
-                name: "🍦 Desserts",
+                name: "Desserts",
                 icon: "🍦",
                 items: [
                     { id: 21, name: "Ice Cream", desc: "Vanilla or chocolate scoop", price: 1.50 },
@@ -353,32 +318,33 @@
         // ============================================================
         function renderMenu() {
             const container = document.getElementById('menuContainer');
+            if (!container) {
+                console.error('menuContainer not found!');
+                return;
+            }
             container.innerHTML = '';
 
-            menuCategories.forEach(category => {
-                // Category title
+            menuCategories.forEach(function(category) {
                 const title = document.createElement('div');
                 title.className = 'category-title';
-                title.innerHTML = ${category.icon} ${category.name};
+                title.textContent = category.icon + ' ' + category.name;
                 container.appendChild(title);
 
-                // Items grid
                 const grid = document.createElement('div');
                 grid.className = 'menu-grid';
 
-                category.items.forEach(item => {
+                category.items.forEach(function(item) {
                     const div = document.createElement('div');
                     div.className = 'menu-item';
-                    div.id = item-${item.id};
-                    div.innerHTML = `
-                        <div class="icon">${category.icon}</div>
-                        <h3>${item.name}</h3>
-                        <div class="desc">${item.desc}</div>
-                        <div class="price">BD ${item.price.toFixed(2)}</div>
-                        <button class="add-btn" onclick="addToCart(${item.id})">
-                            <i class="fas fa-plus"></i> Add
-                        </button>
-                    `;
+                    div.id = 'item-' + item.id;
+                    div.innerHTML = 
+                        '<div class="icon">' + category.icon + '</div>' +
+                        '<h3>' + item.name + '</h3>' +
+                        '<div class="desc">' + item.desc + '</div>' +
+                        '<div class="price">BD ' + item.price.toFixed(2) + '</div>' +
+                        '<button class="add-btn" onclick="addToCart(' + item.id + ')">' +
+                        '<i class="fas fa-plus"></i> Add' +
+                        '</button>';
                     grid.appendChild(div);
                 });
 
@@ -390,10 +356,9 @@
         // 4. ADD TO CART
         // ============================================================
         function addToCart(id) {
-            // Find item across all categories
             let item = null;
-            for (const category of menuCategories) {
-                const found = category.items.find(i => i.id === id);
+            for (var c = 0; c < menuCategories.length; c++) {
+                var found = menuCategories[c].items.find(function(i) { return i.id === id; });
                 if (found) {
                     item = found;
                     break;
@@ -401,21 +366,24 @@
             }
             if (!item) return;
 
-            const existing = cart.find(i => i.id === id);
+            var existing = cart.find(function(i) { return i.id === id; });
             if (existing) {
                 existing.quantity += 1;
             } else {
-                cart.push({ ...item, quantity: 1 });
+                var newItem = {
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    quantity: 1
+                };
+                cart.push(newItem);
             }
 
-            // Button feedback
-            const btn = document.querySelector(#item-${id} .add-btn);
+            var btn = document.querySelector('#item-' + id + ' .add-btn');
             if (btn) {
                 btn.innerHTML = '✅ Added!';
-                btn.classList.add('added');
-                setTimeout(() => {
+                setTimeout(function() {
                     btn.innerHTML = '<i class="fas fa-plus"></i> Add';
-                    btn.classList.remove('added');
                 }, 1000);
             }
 
@@ -426,7 +394,7 @@
         // 5. REMOVE FROM CART
         // ============================================================
         function removeFromCart(id) {
-            cart = cart.filter(item => item.id !== id);
+            cart = cart.filter(function(item) { return item.id !== id; });
             renderCart();
         }
 
@@ -445,40 +413,41 @@
         // 7. RENDER CART
         // ============================================================
         function renderCart() {
-            const cartContainer = document.getElementById('cartItems');
-            const totalSpan = document.getElementById('cartTotal');
-            const badge = document.getElementById('cartBadge');
+            var cartContainer = document.getElementById('cartItems');
+            var totalSpan = document.getElementById('cartTotal');
+            var badge = document.getElementById('cartBadge');
 
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            var totalItems = 0;
+            for (var i = 0; i < cart.length; i++) {
+                totalItems += cart[i].quantity;
+            }
             badge.textContent = totalItems;
 
             if (cart.length === 0) {
-                cartContainer.innerHTML = <div class="empty-cart">🛒 Your cart is empty</div>;
+                cartContainer.innerHTML = '<div class="empty-cart">🛒 Your cart is empty</div>';
                 totalSpan.textContent = 'BD 0.00';
                 return;
             }
 
-            let html = '';
-            let total = 0;
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
+            var html = '';
+            var total = 0;
+            for (var i = 0; i < cart.length; i++) {
+                var itemTotal = cart[i].price * cart[i].quantity;
                 total += itemTotal;
-                html += `
-                    <div class="cart-item">
-                        <span class="item-name">${item.name} x${item.quantity}</span>
-                        <span>
-                            <span class="item-price">BD ${itemTotal.toFixed(2)}</span>
-                            <button class="remove-btn" onclick="removeFromCart(${item.id})">×</button>
-                        </span>
-                    </div>
-                `;
-            });
+                html += '<div class="cart-item">' +
+                    '<span class="item-name">' + cart[i].name + ' x' + cart[i].quantity + '</span>' +
+                    '<span>' +
+                    '<span class="item-price">BD ' + itemTotal.toFixed(2) + '</span>' +
+                    '<button class="remove-btn" onclick="removeFromCart(' + cart[i].id + ')">×</button>' +
+                    '</span>' +
+                    '</div>';
+            }
             cartContainer.innerHTML = html;
-            totalSpan.textContent = BD ${total.toFixed(2)};
+            totalSpan.textContent = 'BD ' + total.toFixed(2);
         }
 
         // ============================================================
-        // 8. CHECKOUT (WhatsApp)
+        // 8. CHECKOUT
         // ============================================================
         function checkout() {
             if (cart.length === 0) {
@@ -486,18 +455,18 @@
                 return;
             }
 
-            let message = "🍕 New Order from Nabz-Tech Eats!%0A%0A";
-            let total = 0;
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
+            var message = "🍕 New Order from Nabz-Tech Eats!%0A%0A";
+            var total = 0;
+            for (var i = 0; i < cart.length; i++) {
+                var itemTotal = cart[i].price * cart[i].quantity;
                 total += itemTotal;
-                message += ✅ ${item.quantity}x ${item.name} - BD ${itemTotal.toFixed(2)}%0A;
-            });
-            message += %0A*Total: BD ${total.toFixed(2)}*%0A%0A;
-            message += 📍 *Delivery Address:* [Please add your address];
+                message += "✅ " + cart[i].quantity + "x " + cart[i].name + " - BD " + itemTotal.toFixed(2) + "%0A";
+            }
+            message += "%0A*Total: BD " + total.toFixed(2) + "*%0A%0A";
+            message += "📍 Delivery Address: [Please add your address]";
 
-            const phone = '97333310359';
-            const url = https://wa.me/${phone}?text=${message};
+            var phone = '97333310360';
+            var url = 'https://wa.me/' + phone + '?text=' + message;
             window.open(url, '_blank');
         }
 
