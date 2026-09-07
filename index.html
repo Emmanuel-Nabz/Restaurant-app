@@ -549,7 +549,7 @@
                 var itemTotal = cart[i].price * cart[i].quantity;
                 total += itemTotal;
                 itemCount += cart[i].quantity;
-                message += cart[i].quantity + "x " + cart[i].name + "";
+                message += cart[i].quantity + " " + cart[i].name + "";
                 message += "   BD " + itemTotal.toFixed(2) + "";
             }
 
@@ -559,8 +559,6 @@
             message += "───────────────────────────";
 
             message += "⏰ Order Time: " + new Date().toLocaleString() + "";
-            message += "✅ Thank you for your order!";
-            message += "📞 We will confirm shortly.";
 
             // Send to WhatsApp
             var whatsappNumber = '97333310359';
