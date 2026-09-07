@@ -318,7 +318,7 @@
 
     <script>
         // ============================================================
-        // 1. FULL MENU WITH CATEGORIES
+        // 1. FULL MENU WITH CATEGORIES (3 ITEMS PER CATEGORY)
         // ============================================================
         const menuCategories = [
             {
@@ -327,62 +327,57 @@
                 items: [
                     { id: 1, name: "Classic Burger", desc: "Beef patty, lettuce, tomato, cheese", price: 2.50, image: "bagar.jpg" },
                     { id: 2, name: "Cheese Burger", desc: "Double cheese, caramelized onions", price: 3.00, image: "beef bager.jpg" },
-                    { id: 3, name: "Chicken Burger", desc: "Grilled chicken, garlic mayo", price: 2.75, image: "chicken burgar.jpg" },
-                    
+                    { id: 3, name: "Chicken Burger", desc: "Grilled chicken, garlic mayo", price: 2.75, image: "chicken burgar.jpg" }
                 ]
             },
             {
                 name: "Pizzas",
                 icon: "🍕",
                 items: [
-                    { id: 5, name: "Margherita Pizza", desc: "Tomato, mozzarella, basil", price: 3.00, image: "pizza.jpg" },
-                    { id: 6, name: "Pepperoni Pizza", desc: "Pepperoni, cheese, tomato sauce", price: 3.50, image: "pizaa 2.jpg" },
-                    { id: 7, name: "Veggie Pizza", desc: "Bell peppers, mushrooms, olives", price: 3.25, image: "pizza veg.jpg" },
-                   
+                    { id: 4, name: "Margherita Pizza", desc: "Tomato, mozzarella, basil", price: 3.00, image: "pizza.jpg" },
+                    { id: 5, name: "Pepperoni Pizza", desc: "Pepperoni, cheese, tomato sauce", price: 3.50, image: "pizaa 2.jpg" },
+                    { id: 6, name: "BBQ Chicken Pizza", desc: "BBQ sauce, chicken, red onions", price: 4.00, image: "pizza.jpg" }
                 ]
             },
             {
                 name: "Wraps & Sandwiches",
                 icon: "🌯",
                 items: [
-                    { id: 9, name: "Chicken Wrap", desc: "Grilled chicken, veggies, garlic sauce", price: 2.00, image: "sandwich 3.jpg" },
-                    { id: 10, name: "Falafel Wrap", desc: "Falafel, tahini, pickles, salad", price: 1.75, image: "sandwich 4.jpg" },
-                    { id: 11, name: "Club Sandwich", desc: "Triple layer, chicken, bacon, lettuce", price: 2.50, image: "sandwich.jpg" }
+                    { id: 7, name: "Chicken Wrap", desc: "Grilled chicken, veggies, garlic sauce", price: 2.00, image: "sandwich 3.jpg" },
+                    { id: 8, name: "Falafel Wrap", desc: "Falafel, tahini, pickles, salad", price: 1.75, image: "sandwich 4.jpg" },
+                    { id: 9, name: "Club Sandwich", desc: "Triple layer, chicken, bacon, lettuce", price: 2.50, image: "sandwich.jpg" }
                 ]
             },
             {
                 name: "Sides",
                 icon: "🍟",
                 items: [
-                    { id: 12, name: "French Fries", desc: "Crispy golden fries", price: 1.00, image: "flies 2.jpg" },
-                    { id: 13, name: "Cheese Fries", desc: "Fries topped with melted cheese", price: 1.50, image: "flies.jpg" },
-                    { id: 14, name: "Onion Rings", desc: "Crispy battered onion rings", price: 1.25, image: "french flies.jpg" },
-                   
+                    { id: 10, name: "French Fries", desc: "Crispy golden fries", price: 1.00, image: "flies 2.jpg" },
+                    { id: 11, name: "Cheese Fries", desc: "Fries topped with melted cheese", price: 1.50, image: "flies.jpg" },
+                    { id: 12, name: "Chicken Nuggets", desc: "6 pieces, crispy & tender", price: 1.75, image: "nuggets.jpg" }
                 ]
             },
             {
                 name: "Drinks",
                 icon: "🥤",
                 items: [
-                    { id: 16, name: "Coca-Cola", desc: "Classic cold drink", price: 1.00, image: "cola.jpg" },
-                    { id: 17, name: "Pepsi", desc: "Cold drink", price: 1.00, image: "pepsi.jpg" },
-                    { id: 18, name: "Sprite", desc: "Lemon-lime soda", price: 1.00, image: "sprite.jpg" },
-                    
-                    
+                    { id: 13, name: "Coca-Cola", desc: "Classic cold drink", price: 1.00, image: "cola.jpg" },
+                    { id: 14, name: "Pepsi", desc: "Cold drink", price: 1.00, image: "pepsi.jpg" },
+                    { id: 15, name: "Milkshake", desc: "Chocolate, strawberry, or vanilla", price: 1.75, image: "milkshake.jpg" }
+                ]
             },
             {
                 name: "Desserts",
                 icon: "🍦",
                 items: [
-                    { id: 21, name: "Ice Cream", desc: "Vanilla or chocolate scoop", price: 1.50, image: "dessert.jpg" },
-                    { id: 22, name: "Brownie", desc: "Warm chocolate brownie", price: 1.75, image: "dessert1.jpg" },
-                    { id: 23, name: "Cheesecake", desc: "New York style cheesecake", price: 2.00, image: "dessert2.jpg" }
+                    { id: 16, name: "Ice Cream", desc: "Vanilla or chocolate scoop", price: 1.50, image: "dessert.jpg" },
+                    { id: 17, name: "Brownie", desc: "Warm chocolate brownie", price: 1.75, image: "dessert1.jpg" },
+                    { id: 18, name: "Cheesecake", desc: "New York style cheesecake", price: 2.00, image: "dessert2.jpg" }
                 ]
             }
         ];
 
-        // ===================={ id: 20, name: "Milkshake", desc: "Chocolate, strawberry, or vanilla", price: 1.75, image: "milkshake.jpg" }
-                ]========================================
+        // ============================================================
         // 2. CART
         // ============================================================
         let cart = [];
@@ -529,7 +524,7 @@
         }
 
         // ============================================================
-        // 8. CHECKOUT (WITH PAYMENT METHOD)
+        // 8. CHECKOUT
         // ============================================================
         function checkout() {
             if (cart.length === 0) {
@@ -560,7 +555,6 @@
                 return;
             }
 
-            // Build WhatsApp message with payment method
             var message = "🍕 NABZ-TECH EATS - NEW ORDER ";
             message += "═══════════════════════════";
 
