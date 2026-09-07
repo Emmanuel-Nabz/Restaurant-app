@@ -276,7 +276,7 @@
             <h3 style="color: #2c3e50; margin-bottom: 10px;">
                 <i class="fas fa-user-circle"></i> Contact Details
             </h3>
-            
+</div>
             <div class="form-group">
                 <label><i class="fas fa-user"></i> Full Name:</label>
                 <input type="text" id="customerName" class="input-field" placeholder="Enter your full name">
@@ -292,6 +292,31 @@
                 <input type="text" id="deliveryAddress" class="input-field" placeholder="Enter your full address">
             </div>
         </div>
+          <!-- ===== PAYMENT METHOD ===== -->
+<div class="form-group">
+    <label><i class="fas fa-credit-card"></i> Payment Method:</label>
+    <select id="paymentMethod" class="input-field" style="appearance: auto;">
+        <option value="Cash on Delivery">💵 Cash on Delivery</option>
+        <option value="Benefit Pay">📱 Benefit Pay</option>
+        <option value="Credit/Debit Card">💳 Credit/Debit Card</option>
+    </select>
+    // Get payment method
+var payment = document.getElementById('paymentMethod').value;
+
+// Build message (add payment method)
+var message = "🍕 NABZ-TECH EATS - NEW ORDER %0A";
+message += "═══════════════════════════%0A%0A";
+
+message += "👤 Customer: " + name + "%0A";
+message += "📱 Phone: " + phone + "%0A";
+message += "📍 Address: " + address + "%0A";
+message += "💳 Payment: " + payment + "%0A%0A";  // <-- ADDED THIS LINE
+
+message += "───────────────────────────%0A";
+message += "🛒 ORDER SUMMARY %0A";
+message += "───────────────────────────%0A";
+
+// Rest of the order summary...
 
         <button class="checkout-btn" onclick="checkout()">
             <i class="fab fa-whatsapp"></i> Order via WhatsApp
