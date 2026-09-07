@@ -493,14 +493,14 @@
                 return;
             }
 
-            var message = "🍕 New Order from Nabz-Tech Eats!%0A%0A";
+            var message = "🍕 New Order from Nabz-Tech Eats!";
             var total = 0;
             for (var i = 0; i < cart.length; i++) {
                 var itemTotal = cart[i].price * cart[i].quantity;
                 total += itemTotal;
-                message += "✅ " + cart[i].quantity + "x " + cart[i].name + " - BD " + itemTotal.toFixed(2) + "%0A";
+                message += "✅ " + cart[i].quantity + "x " + cart[i].name + " - BD " + itemTotal.toFixed(2) +"";
             }
-            message += "%0A*Total: BD " + total.toFixed(2) + "*%0A%0A";
+            message += "Total: BD " + total.toFixed(2) + "";
             message += "📍 Delivery Address: " + address;
 
             var phone = '97333310359'; // Fixed to your correct number
