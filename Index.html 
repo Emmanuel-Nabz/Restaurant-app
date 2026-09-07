@@ -47,73 +47,106 @@
             color: #7f8c8d;
             font-size: 1.1em;
         }
-        .category-title {
-            font-size: 1.5em;
-            color: #2c3e50;
-            margin: 30px 0 15px;
-            padding-bottom: 8px;
-            border-bottom: 3px solid #3498db;
+
+        /* ===== CATEGORY TABS ===== */
+        .category-tabs {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+            justify-content: center;
         }
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 10px;
-        }
-        .menu-item {
+        .category-tab {
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 2px solid #ddd;
             background: white;
-            border-radius: 12px;
-            padding: 18px 15px;
-            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s;
+            color: #7f8c8d;
+        }
+        .category-tab:hover {
+            border-color: #3498db;
+            color: #3498db;
+        }
+        .category-tab.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .category-tab .icon {
+            margin-right: 6px;
+        }
+
+        /* ===== MENU ITEMS (NEW LAYOUT) ===== */
+        .menu-item-large {
+            display: flex;
+            gap: 20px;
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.06);
             border: 1px solid #ecf0f1;
             transition: all 0.3s;
+            align-items: center;
         }
-        .menu-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        .menu-item-large:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
         }
-        .menu-item img {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
+        .menu-item-large .item-image {
+            flex-shrink: 0;
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
             object-fit: cover;
-            margin-bottom: 8px;
+            background: #ecf0f1;
         }
-        .menu-item h3 {
-            font-size: 1.05em;
+        .menu-item-large .item-details {
+            flex: 1;
+        }
+        .menu-item-large .item-details h3 {
+            font-size: 1.1em;
             color: #2c3e50;
         }
-        .menu-item .desc {
-            font-size: 0.8em;
+        .menu-item-large .item-details .desc {
+            font-size: 0.85em;
             color: #7f8c8d;
-            margin: 5px 0;
-            min-height: 36px;
+            margin: 4px 0 8px;
         }
-        .menu-item .price {
+        .menu-item-large .item-details .price {
             font-weight: bold;
             color: #27ae60;
             font-size: 1.2em;
         }
-        .menu-item .add-btn {
+        .menu-item-large .item-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .menu-item-large .add-btn {
             background: #3498db;
             color: white;
             border: none;
-            padding: 8px 12px;
+            padding: 8px 18px;
             border-radius: 25px;
             cursor: pointer;
             font-weight: 600;
             font-size: 0.9em;
-            margin-top: 10px;
-            width: 100%;
             transition: background 0.2s;
         }
-        .menu-item .add-btn:hover {
+        .menu-item-large .add-btn:hover {
             background: #2980b9;
         }
+        .menu-item-large .add-btn.added {
+            background: #27ae60;
+        }
+
+        /* ===== CART SECTION (unchanged) ===== */
         .cart-section {
             background: white;
             border-radius: 12px;
@@ -165,6 +198,23 @@
             padding-top: 15px;
             margin-top: 10px;
             border-top: 2px solid #2c3e50;
+        }
+        .delivery-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1em;
+            color: #7f8c8d;
+            padding-top: 8px;
+        }
+        .grand-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.4em;
+            font-weight: bold;
+            padding-top: 15px;
+            margin-top: 10px;
+            border-top: 2px solid #27ae60;
+            color: #27ae60;
         }
         .checkout-btn {
             background: #27ae60;
@@ -241,11 +291,49 @@
             appearance: auto;
             background: white;
         }
+        .location-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            white-space: nowrap;
+            transition: background 0.3s;
+        }
+        .location-btn:hover {
+            background: #2980b9;
+        }
+        .location-status {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .no-items {
+            text-align: center;
+            color: #95a5a6;
+            padding: 40px 0;
+            font-size: 1.1em;
+        }
         @media (max-width: 600px) {
             .app-header h1 { font-size: 1.8em; }
-            .menu-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-            .menu-item { padding: 12px; }
-            .menu-item img { width: 60px; height: 60px; }
+            .menu-item-large {
+                flex-direction: column;
+                text-align: center;
+            }
+            .menu-item-large .item-image {
+                width: 100%;
+                height: 150px;
+            }
+            .menu-item-large .item-actions {
+                justify-content: center;
+            }
+            .category-tab {
+                padding: 8px 14px;
+                font-size: 0.8em;
+            }
+            .location-btn { padding: 10px 12px; font-size: 0.85em; }
         }
     </style>
 </head>
@@ -256,6 +344,10 @@
         <p>Order your favorite food online — delivered to your door!</p>
     </div>
 
+    <!-- ===== CATEGORY TABS ===== -->
+    <div class="category-tabs" id="categoryTabs"></div>
+
+    <!-- ===== MENU CONTAINER ===== -->
     <div id="menuContainer"></div>
 
     <div class="cart-section">
@@ -270,12 +362,20 @@
         <div id="cartItems">
             <div class="empty-cart">🛒 Your cart is empty</div>
         </div>
-        <div class="cart-total">
+        
+        <div class="cart-total" id="subtotalRow">
+            <span>Subtotal:</span>
+            <span id="subtotal">BD 0.00</span>
+        </div>
+        <div class="delivery-row" id="deliveryRow">
+            <span>🚚 Delivery Fee:</span>
+            <span id="deliveryFee">BD 0.500</span>
+        </div>
+        <div class="grand-total" id="grandTotalRow">
             <span>Total:</span>
-            <span id="cartTotal">BD 0.00</span>
+            <span id="grandTotal">BD 0.500</span>
         </div>
 
-        <!-- ===== CUSTOMER CONTACT DETAILS ===== -->
         <div style="margin-top: 20px; padding-top: 15px; border-top: 2px dashed #ecf0f1;">
             <h3 style="color: #2c3e50; margin-bottom: 10px;">
                 <i class="fas fa-user-circle"></i> Contact Details
@@ -293,10 +393,15 @@
 
             <div class="form-group">
                 <label><i class="fas fa-map-pin"></i> Delivery Address:</label>
-                <input type="text" id="deliveryAddress" class="input-field" placeholder="Enter your full address">
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="deliveryAddress" class="input-field" placeholder="Enter your full address" style="flex: 1;">
+                    <button onclick="shareLocation()" class="location-btn">
+                        <i class="fas fa-location-dot"></i> Share
+                    </button>
+                </div>
+                <div id="locationStatus" class="location-status"></div>
             </div>
 
-            <!-- ===== PAYMENT METHOD ===== -->
             <div class="form-group">
                 <label><i class="fas fa-credit-card"></i> Payment Method:</label>
                 <select id="paymentMethod" class="input-field" style="appearance: auto;">
@@ -307,7 +412,6 @@
             </div>
         </div>
 
-        <!-- ===== PLACE ORDER BUTTON ===== -->
         <button class="checkout-btn" onclick="checkout()">
             <i class="fas fa-paper-plane"></i> Place Order
         </button>
@@ -319,7 +423,13 @@
 
     <script>
         // ============================================================
-        // 1. FULL MENU WITH CATEGORIES (3 ITEMS PER CATEGORY)
+        // 1. CONSTANTS
+        // ============================================================
+        const DELIVERY_FEE = 0.500;
+        let currentCategory = 'All';
+
+        // ============================================================
+        // 2. FULL MENU WITH CATEGORIES
         // ============================================================
         const menuCategories = [
             {
@@ -341,7 +451,7 @@
                 ]
             },
             {
-                name: "Wraps & Sandwiches",
+                name: "Wraps",
                 icon: "🌯",
                 items: [
                     { id: 7, name: "Chicken Wrap", desc: "Grilled chicken, veggies, garlic sauce", price: 2.00, image: "sandwich 3.jpg" },
@@ -379,59 +489,101 @@
         ];
 
         // ============================================================
-        // 2. CART
+        // 3. CART
         // ============================================================
         let cart = [];
 
         // ============================================================
-        // 3. RENDER MENU
+        // 4. RENDER CATEGORY TABS
         // ============================================================
-        function renderMenu() {
-            const container = document.getElementById('menuContainer');
-            if (!container) {
-                console.error('menuContainer not found!');
-                return;
-            }
+        function renderTabs() {
+            var container = document.getElementById('categoryTabs');
             container.innerHTML = '';
 
+            // Add "All" tab
+            var allTab = document.createElement('button');
+            allTab.className = 'category-tab' + (currentCategory === 'All' ? ' active' : '');
+            allTab.innerHTML = '📋 All';
+            allTab.onclick = function() { filterCategory('All'); };
+            container.appendChild(allTab);
+
+            // Add category tabs
             menuCategories.forEach(function(category) {
-                const title = document.createElement('div');
-                title.className = 'category-title';
-                title.textContent = category.icon + ' ' + category.name;
-                container.appendChild(title);
-
-                const grid = document.createElement('div');
-                grid.className = 'menu-grid';
-
-                category.items.forEach(function(item) {
-                    const div = document.createElement('div');
-                    div.className = 'menu-item';
-                    div.id = 'item-' + item.id;
-
-                    var imageHtml = '';
-                    if (item.image) {
-                        imageHtml = '<img src="' + item.image + '" alt="' + item.name + '">';
-                    } else {
-                        imageHtml = '<div class="icon">' + category.icon + '</div>';
-                    }
-
-                    div.innerHTML = 
-                        imageHtml +
-                        '<h3>' + item.name + '</h3>' +
-                        '<div class="desc">' + item.desc + '</div>' +
-                        '<div class="price">BD ' + item.price.toFixed(2) + '</div>' +
-                        '<button class="add-btn" onclick="addToCart(' + item.id + ')">' +
-                        '<i class="fas fa-plus"></i> Add' +
-                        '</button>';
-                    grid.appendChild(div);
-                });
-
-                container.appendChild(grid);
+                var tab = document.createElement('button');
+                tab.className = 'category-tab' + (currentCategory === category.name ? ' active' : '');
+                tab.innerHTML = category.icon + ' ' + category.name;
+                tab.onclick = function() { filterCategory(category.name); };
+                container.appendChild(tab);
             });
         }
 
         // ============================================================
-        // 4. ADD TO CART
+        // 5. FILTER CATEGORY
+        // ============================================================
+        function filterCategory(category) {
+            currentCategory = category;
+            renderTabs();
+            renderMenu();
+        }
+
+        // ============================================================
+        // 6. RENDER MENU (UPDATED WITH NEW LAYOUT)
+        // ============================================================
+        function renderMenu() {
+            var container = document.getElementById('menuContainer');
+            container.innerHTML = '';
+
+            var itemsToShow = [];
+            if (currentCategory === 'All') {
+                menuCategories.forEach(function(cat) {
+                    itemsToShow = itemsToShow.concat(cat.items);
+                });
+            } else {
+                var found = menuCategories.find(function(cat) { return cat.name === currentCategory; });
+                if (found) {
+                    itemsToShow = found.items;
+                }
+            }
+
+            if (itemsToShow.length === 0) {
+                container.innerHTML = '<div class="no-items">No items in this category</div>';
+                return;
+            }
+
+            itemsToShow.forEach(function(item) {
+                var div = document.createElement('div');
+                div.className = 'menu-item-large';
+                div.id = 'item-' + item.id;
+
+                // Find category icon
+                var catIcon = '🍽️';
+                for (var c = 0; c < menuCategories.length; c++) {
+                    var found = menuCategories[c].items.find(function(i) { return i.id === item.id; });
+                    if (found) {
+                        catIcon = menuCategories[c].icon;
+                        break;
+                    }
+                }
+
+                div.innerHTML = `
+                    <img src="${item.image || 'https://via.placeholder.com/100'}" alt="${item.name}" class="item-image" onerror="this.src='https://via.placeholder.com/100?text=🍽️'">
+                    <div class="item-details">
+                        <h3>${catIcon} ${item.name}</h3>
+                        <div class="desc">${item.desc}</div>
+                        <div class="price">BD ${item.price.toFixed(2)}</div>
+                        <div class="item-actions">
+                            <button class="add-btn" onclick="addToCart(${item.id})">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // ============================================================
+        // 7. ADD TO CART
         // ============================================================
         function addToCart(id) {
             let item = null;
@@ -460,8 +612,10 @@
             var btn = document.querySelector('#item-' + id + ' .add-btn');
             if (btn) {
                 btn.innerHTML = '✅ Added!';
+                btn.classList.add('added');
                 setTimeout(function() {
                     btn.innerHTML = '<i class="fas fa-plus"></i> Add';
+                    btn.classList.remove('added');
                 }, 1000);
             }
 
@@ -469,7 +623,7 @@
         }
 
         // ============================================================
-        // 5. REMOVE FROM CART
+        // 8. REMOVE FROM CART
         // ============================================================
         function removeFromCart(id) {
             cart = cart.filter(function(item) { return item.id !== id; });
@@ -477,7 +631,7 @@
         }
 
         // ============================================================
-        // 6. CLEAR CART
+        // 9. CLEAR CART
         // ============================================================
         function clearCart() {
             if (cart.length === 0) return;
@@ -488,11 +642,12 @@
         }
 
         // ============================================================
-        // 7. RENDER CART
+        // 10. RENDER CART
         // ============================================================
         function renderCart() {
             var cartContainer = document.getElementById('cartItems');
-            var totalSpan = document.getElementById('cartTotal');
+            var subtotalSpan = document.getElementById('subtotal');
+            var grandTotalSpan = document.getElementById('grandTotal');
             var badge = document.getElementById('cartBadge');
 
             var totalItems = 0;
@@ -503,15 +658,16 @@
 
             if (cart.length === 0) {
                 cartContainer.innerHTML = '<div class="empty-cart">🛒 Your cart is empty</div>';
-                totalSpan.textContent = 'BD 0.00';
+                subtotalSpan.textContent = 'BD 0.00';
+                grandTotalSpan.textContent = 'BD 0.500';
                 return;
             }
 
             var html = '';
-            var total = 0;
+            var subtotal = 0;
             for (var i = 0; i < cart.length; i++) {
                 var itemTotal = cart[i].price * cart[i].quantity;
-                total += itemTotal;
+                subtotal += itemTotal;
                 html += '<div class="cart-item">' +
                     '<span class="item-name">' + cart[i].name + ' x' + cart[i].quantity + '</span>' +
                     '<span>' +
@@ -521,11 +677,44 @@
                     '</div>';
             }
             cartContainer.innerHTML = html;
-            totalSpan.textContent = 'BD ' + total.toFixed(2);
+
+            var grandTotal = subtotal + DELIVERY_FEE;
+            subtotalSpan.textContent = 'BD ' + subtotal.toFixed(2);
+            grandTotalSpan.textContent = 'BD ' + grandTotal.toFixed(2);
         }
 
         // ============================================================
-        // 8. CHECKOUT (UPDATED: Email + Confirmation)
+        // 11. SHARE LOCATION
+        // ============================================================
+        function shareLocation() {
+            var status = document.getElementById('locationStatus');
+            status.textContent = '📍 Getting your location...';
+            status.style.color = '#3498db';
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        var lat = position.coords.latitude;
+                        var lng = position.coords.longitude;
+                        var mapsUrl = 'https://www.google.com/maps?q=' + lat + ',' + lng;
+                        window.open(mapsUrl, '_blank');
+                        status.textContent = '✅ Location shared! Please copy the address from Google Maps.';
+                        status.style.color = '#27ae60';
+                    },
+                    function(error) {
+                        status.textContent = '❌ Could not get location. Please enter your address manually.';
+                        status.style.color = '#e74c3c';
+                        console.log('Location error:', error.message);
+                    }
+                );
+            } else {
+                status.textContent = '❌ Location not supported on this device.';
+                status.style.color = '#e74c3c';
+            }
+        }
+
+        // ============================================================
+        // 12. CHECKOUT
         // ============================================================
         function checkout() {
             if (cart.length === 0) {
@@ -556,18 +745,18 @@
                 return;
             }
 
-            // ===== BUILD ORDER SUMMARY =====
             var orderSummary = "";
-            var total = 0;
+            var subtotal = 0;
             var itemCount = 0;
             for (var i = 0; i < cart.length; i++) {
                 var itemTotal = cart[i].price * cart[i].quantity;
-                total += itemTotal;
+                subtotal += itemTotal;
                 itemCount += cart[i].quantity;
                 orderSummary += cart[i].quantity + "x " + cart[i].name + " - BD " + itemTotal.toFixed(2) + "\n";
             }
 
-            // ===== SEND TO EMAIL VIA FORMSUBMIT =====
+            var grandTotal = subtotal + DELIVERY_FEE;
+
             var form = document.createElement('form');
             form.method = 'POST';
             form.action = 'https://formsubmit.co/makemmy98@yahoo.com';
@@ -579,8 +768,9 @@
                 'Address': address,
                 'Payment Method': payment,
                 'Order Summary': orderSummary,
-                'Total Items': itemCount,
-                'Total Amount': 'BD ' + total.toFixed(2),
+                'Subtotal': 'BD ' + subtotal.toFixed(2),
+                'Delivery Fee': 'BD ' + DELIVERY_FEE.toFixed(2),
+                'Total Amount': 'BD ' + grandTotal.toFixed(2),
                 '_captcha': 'false'
             };
 
@@ -595,7 +785,6 @@
             document.body.appendChild(form);
             form.submit();
 
-            // ===== SHOW CONFIRMATION MESSAGE =====
             var confirmation = document.createElement('div');
             confirmation.id = 'confirmationModal';
             confirmation.style.cssText = `
@@ -631,7 +820,8 @@
                     <div style="background: #f8f9fa; border-radius: 10px; padding: 15px; text-align: left; margin-bottom: 20px;">
                         <p style="font-size: 0.9em; color: #7f8c8d; margin-bottom: 5px;">📦 Order Summary</p>
                         <p style="font-size: 0.9em; color: #2c3e50;">${orderSummary.replace(/\n/g, '<br>')}</p>
-                        <p style="font-weight: bold; margin-top: 10px; color: #27ae60;">Total: BD ${total.toFixed(2)}</p>
+                        <p style="font-size: 0.9em; color: #7f8c8d; margin-top: 5px;">🚚 Delivery Fee: BD ${DELIVERY_FEE.toFixed(2)}</p>
+                        <p style="font-weight: bold; margin-top: 10px; color: #27ae60;">Total: BD ${grandTotal.toFixed(2)}</p>
                     </div>
                     <p style="color: #7f8c8d; font-size: 0.85em; margin-bottom: 20px;">
                         We will confirm your order shortly via WhatsApp.
@@ -650,7 +840,6 @@
                 </div>
             `;
 
-            // Add animation styles
             var style = document.createElement('style');
             style.textContent = `
                 @keyframes fadeIn {
@@ -667,13 +856,12 @@
 
             document.body.appendChild(confirmation);
 
-            // Clear cart after order
             cart = [];
             renderCart();
         }
 
         // ============================================================
-        // 9. CLOSE CONFIRMATION
+        // 13. CLOSE CONFIRMATION
         // ============================================================
         function closeConfirmation() {
             var confirmation = document.getElementById('confirmationModal');
@@ -683,8 +871,9 @@
         }
 
         // ============================================================
-        // 10. START
+        // 14. START
         // ============================================================
+        renderTabs();
         renderMenu();
         renderCart();
     </script>
