@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🍕 Nabz-Tech Eats</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- ===== PWA SETUP ===== -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Nabz-Eats">
+    <meta name="application-name" content="Nabz-Eats">
+    <meta name="theme-color" content="#e67e22">
+    
     <style>
+        /* Your existing CSS here */
         * {
             margin: 0;
             padding: 0;
@@ -63,8 +72,11 @@
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
-        .menu-item .icon {
-            font-size: 3em;
+        .menu-item img {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
             margin-bottom: 8px;
         }
         .menu-item h3 {
@@ -225,7 +237,7 @@
             .app-header h1 { font-size: 1.8em; }
             .menu-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
             .menu-item { padding: 12px; }
-            .menu-item .icon { font-size: 2.2em; }
+            .menu-item img { width: 60px; height: 60px; }
         }
     </style>
 </head>
@@ -384,7 +396,7 @@
 
                     var imageHtml = '';
                     if (item.image) {
-                        imageHtml = '<img src="' + item.image + '" alt="' + item.name + '" style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; margin-bottom: 8px;">';
+                        imageHtml = '<img src="' + item.image + '" alt="' + item.name + '">';
                     } else {
                         imageHtml = '<div class="icon">' + category.icon + '</div>';
                     }
@@ -499,7 +511,7 @@
         }
 
         // ============================================================
-        // 8. CHECKOUT (FORMATTED MESSAGE)
+        // 8. CHECKOUT
         // ============================================================
         function checkout() {
             if (cart.length === 0) {
@@ -507,7 +519,6 @@
                 return;
             }
 
-            // Get customer details
             var name = document.getElementById('customerName').value;
             var phone = document.getElementById('customerPhone').value;
             var address = document.getElementById('deliveryAddress').value;
@@ -530,38 +541,36 @@
                 return;
             }
 
-            // ===== BUILD CLEAN MESSAGE =====
-            var message = "🍕 NABZ-TECH EATS - NEW ORDER ";
-            message += "═══════════════════════════";
+            var message = "🍕 NABZ-TECH EATS - NEW ORDER %0A";
+            message += "═══════════════════════════%0A%0A";
 
-            // Customer Details
-            message += "👤 Customer: " + name + "";
-            message += "📱 Phone: " + phone + "";
-            message += "📍 Address: " + address + "";
+            message += "👤 Customer: " + name + "%0A";
+            message += "📱 Phone: " + phone + "%0A";
+            message += "📍 Address: " + address + "%0A%0A";
 
-            message += "───────────────────────────";
-            message += "🛒 ORDER SUMMARY ";
-            message += "───────────────────────────";
+            message += "───────────────────────────%0A";
+            message += "🛒 ORDER SUMMARY %0A";
+            message += "───────────────────────────%0A";
 
-            // Order items
             var total = 0;
             var itemCount = 0;
             for (var i = 0; i < cart.length; i++) {
                 var itemTotal = cart[i].price * cart[i].quantity;
                 total += itemTotal;
                 itemCount += cart[i].quantity;
-                message += cart[i].quantity + " " + cart[i].name + "";
-                message += "   BD " + itemTotal.toFixed(2) + "";
+                message += cart[i].quantity + "x " + cart[i].name + "%0A";
+                message += "   BD " + itemTotal.toFixed(2) + "%0A";
             }
 
-            message += "───────────────────────────";
-            message += "📦 Total Items: " + itemCount + "";
-            message += "💰 Total Amount: BD " + total.toFixed(2) + "";
-            message += "───────────────────────────";
+            message += "───────────────────────────%0A";
+            message += "📦 Total Items: " + itemCount + "%0A";
+            message += "💰 Total Amount: BD " + total.toFixed(2) + "%0A";
+            message += "───────────────────────────%0A%0A";
 
-            message += "⏰ Order Time: " + new Date().toLocaleString() + "";
+            message += "⏰ Order Time: " + new Date().toLocaleString() + "%0A%0A";
+            message += "✅ Thank you for your order!%0A";
+            message += "📞 We will confirm shortly.";
 
-            // Send to WhatsApp
             var whatsappNumber = '97333310359';
             var url = 'https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(message);
             window.open(url, '_blank');
@@ -573,17 +582,19 @@
         renderMenu();
         renderCart();
     </script>
-<script>
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/restaurant-app/sw.js')
-            .then(function(registration) {
-                console.log('✅ Service Worker registered!');
-            })
-            .catch(function(error) {
-                console.log('❌ Service Worker error:', error);
-            });
-    }
-</script>
+
+    <!-- ===== REGISTER SERVICE WORKER ===== -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/restaurant-app/sw.js')
+                .then(function() {
+                    console.log('✅ Service Worker registered!');
+                })
+                .catch(function(error) {
+                    console.log('❌ Service Worker error:', error);
+                });
+        }
+    </script>
+
 </body>
 </html>
