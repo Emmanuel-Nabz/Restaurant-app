@@ -199,7 +199,7 @@
             border-top: 1px solid #ecf0f1;
             padding-top: 20px;
         }
-        .address-input {
+        .input-field {
             width: 100%;
             padding: 12px;
             border-radius: 8px;
@@ -208,9 +208,17 @@
             font-size: 1em;
             transition: border-color 0.3s;
         }
-        .address-input:focus {
+        .input-field:focus {
             border-color: #3498db;
             outline: none;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
         }
         @media (max-width: 600px) {
             .app-header h1 { font-size: 1.8em; }
@@ -246,12 +254,26 @@
             <span id="cartTotal">BD 0.00</span>
         </div>
 
-        <!-- ===== DELIVERY ADDRESS INPUT ===== -->
-        <div style="margin: 15px 0;">
-            <label style="font-weight: 600; display: block; margin-bottom: 5px;">
-                <i class="fas fa-map-pin"></i> Delivery Address:
-            </label>
-            <input type="text" id="deliveryAddress" class="address-input" placeholder="Enter your full address">
+        <!-- ===== CUSTOMER CONTACT DETAILS ===== -->
+        <div style="margin-top: 20px; padding-top: 15px; border-top: 2px dashed #ecf0f1;">
+            <h3 style="color: #2c3e50; margin-bottom: 10px;">
+                <i class="fas fa-user-circle"></i> Contact Details
+            </h3>
+            
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Full Name:</label>
+                <input type="text" id="customerName" class="input-field" placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Phone Number:</label>
+                <input type="tel" id="customerPhone" class="input-field" placeholder="Enter your phone number">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-map-pin"></i> Delivery Address:</label>
+                <input type="text" id="deliveryAddress" class="input-field" placeholder="Enter your full address">
+            </div>
         </div>
 
         <button class="checkout-btn" onclick="checkout()">
@@ -265,7 +287,7 @@
 
     <script>
         // ============================================================
-        // 1. FULL MENU WITH CATEGORIES (EXACT FILE NAMES WITH SPACES)
+        // 1. FULL MENU WITH CATEGORIES
         // ============================================================
         const menuCategories = [
             {
@@ -476,7 +498,7 @@
         }
 
         // ============================================================
-        // 8. CHECKOUT (WITH YOUR UPDATED NUMBER)
+        // 8. CHECKOUT (WITH NAME, PHONE, ADDRESS)
         // ============================================================
         function checkout() {
             if (cart.length === 0) {
@@ -484,26 +506,50 @@
                 return;
             }
 
+            // Get customer details
+            var name = document.getElementById('customerName').value;
+            var phone = document.getElementById('customerPhone').value;
             var address = document.getElementById('deliveryAddress').value;
+
+            if (!name) {
+                alert('👤 Please enter your full name.');
+                document.getElementById('customerName').focus();
+                return;
+            }
+
+            if (!phone) {
+                alert('📱 Please enter your phone number.');
+                document.getElementById('customerPhone').focus();
+                return;
+            }
+
             if (!address) {
                 alert('📍 Please enter your delivery address.');
                 document.getElementById('deliveryAddress').focus();
                 return;
             }
 
-            var message = "🍕 New Order from Nabz-Tech Eats!";
+            // Build WhatsApp message
+            var message = "🍕 New Order from Nabz-Tech Eats!%0A%0A";
+            
+            // Customer details
+            message += "👤 Name: " + name + "%0A";
+            message += "📱 Phone: " + phone + "%0A";
+            message += "📍 Address: " + address + "%0A%0A";
+            
+            // Order items
+            message += "Order Summary:%0A";
             var total = 0;
             for (var i = 0; i < cart.length; i++) {
                 var itemTotal = cart[i].price * cart[i].quantity;
                 total += itemTotal;
-                message += "✅ " + cart[i].quantity + "x " + cart[i].name + " - BD " + itemTotal.toFixed(2) + "";
+                message += "✅ " + cart[i].quantity + "x " + cart[i].name + " - BD " + itemTotal.toFixed(2) + "%0A";
             }
-            message += "Total: BD " + total.toFixed(2) + "";
-            message += "📍 Delivery Address: " + address;
+            message += "%0A*Total: BD " + total.toFixed(2) + "*";
 
-            // ✅ Updated to your number: 97333310359
-            var phone = '97333310359';
-            var url = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
+            // Send to WhatsApp
+            var whatsappNumber = '97333310359';
+            var url = 'https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(message);
             window.open(url, '_blank');
         }
 
