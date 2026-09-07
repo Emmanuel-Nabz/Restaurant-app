@@ -303,7 +303,7 @@
                 items: [
                     { id: 21, name: "Ice Cream", desc: "Vanilla or chocolate scoop", price: 1.50, image:"dessert.jpg" },
                     { id: 22, name: "Brownie", desc: "Warm chocolate brownie", price: 1.75, image:"dessert1.jpg" },
-                    { id: 23, name: "Cheesecake", desc: "New York style cheesecake", price: 2.00, image:"dessert2.jpg" }
+                    { id: 23, name: "Cheesecake", desc: "New York style cheesecake", price: 2.00, image:"dessert2" }
                 ]
             }
         ];
@@ -454,39 +454,30 @@
             cartContainer.innerHTML = html;
             totalSpan.textContent = 'BD ' + total.toFixed(2);
         }
-<div style="margin: 15px 0;">
-    <label style="font-weight: 600;">📍 Delivery Address:</label><br>
-    <input type="text" id="deliveryAddress" placeholder="Enter your delivery address" style="width: 100%; padding: 10px; border-radius: 8px; border: 2px solid #ddd; margin-top: 5px;">
-</div>
+
         // ============================================================
         // 8. CHECKOUT
         // ============================================================
-      function checkout() {
-    if (cart.length === 0) {
-        alert('🛒 Your cart is empty! Add some items first.');
-        return;
-    }
+        function checkout() {
+            if (cart.length === 0) {
+                alert('🛒 Your cart is empty! Add some items first.');
+                return;
+            }
 
-    var address = document.getElementById('deliveryAddress').value;
-    if (!address) {
-        alert('📍 Please enter your delivery address.');
-        return;
-    }
+            var message = "🍕 New Order from Nabz-Tech Eats!%0A%0A";
+            var total = 0;
+            for (var i = 0; i < cart.length; i++) {
+                var itemTotal = cart[i].price * cart[i].quantity;
+                total += itemTotal;
+                message += "✅ " + cart[i].quantity + "x " + cart[i].name + " - BD " + itemTotal.toFixed(2) + "%0A";
+            }
+            message += "%0A*Total: BD " + total.toFixed(2) + "*%0A%0A";
+            message += "📍 Delivery Address: [Please add your address]";
 
-    var message = "🍕 New Order from Nabz-Tech Eats!%0A%0A";
-    var total = 0;
-    for (var i = 0; i < cart.length; i++) {
-        var itemTotal = cart[i].price * cart[i].quantity;
-        total += itemTotal;
-        message += "✅ " + cart[i].quantity + "x " + cart[i].name + " - BD " + itemTotal.toFixed(2) + "%0A";
-    }
-    message += "%0A*Total: BD " + total.toFixed(2) + "*%0A%0A";
-    message += "📍 Delivery Address: " + address;
-
-    var phone = '97333310359';
-    var url = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
-    window.open(url, '_blank');
-}
+            var phone = '97333310359';
+            var url = 'https://wa.me/' + phone + '?text=' + message;
+            window.open(url, '_blank');
+        }
 
         // ============================================================
         // 9. START
