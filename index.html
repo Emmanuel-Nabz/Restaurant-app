@@ -13,13 +13,13 @@
     <meta name="apple-mobile-web-app-title" content="Nabz-Eats">
     <meta name="application-name" content="Nabz-Eats">
     <meta name="theme-color" content="#e67e22">
-
-     <!-- App Icons -->
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- ===== APP ICONS ===== -->
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
     
     <style>
-        /* Your existing CSS here */
         * {
             margin: 0;
             padding: 0;
@@ -237,6 +237,10 @@
             display: block;
             margin-bottom: 5px;
         }
+        select.input-field {
+            appearance: auto;
+            background: white;
+        }
         @media (max-width: 600px) {
             .app-header h1 { font-size: 1.8em; }
             .menu-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -276,7 +280,7 @@
             <h3 style="color: #2c3e50; margin-bottom: 10px;">
                 <i class="fas fa-user-circle"></i> Contact Details
             </h3>
-</div>
+            
             <div class="form-group">
                 <label><i class="fas fa-user"></i> Full Name:</label>
                 <input type="text" id="customerName" class="input-field" placeholder="Enter your full name">
@@ -291,32 +295,17 @@
                 <label><i class="fas fa-map-pin"></i> Delivery Address:</label>
                 <input type="text" id="deliveryAddress" class="input-field" placeholder="Enter your full address">
             </div>
+
+            <!-- ===== PAYMENT METHOD ===== -->
+            <div class="form-group">
+                <label><i class="fas fa-credit-card"></i> Payment Method:</label>
+                <select id="paymentMethod" class="input-field" style="appearance: auto;">
+                    <option value="Cash on Delivery">💵 Cash on Delivery</option>
+                    <option value="Benefit Pay">📱 Benefit Pay</option>
+                    <option value="Credit/Debit Card">💳 Credit/Debit Card</option>
+                </select>
+            </div>
         </div>
-          <!-- ===== PAYMENT METHOD ===== -->
-<div class="form-group">
-    <label><i class="fas fa-credit-card"></i> Payment Method:</label>
-    <select id="paymentMethod" class="input-field" style="appearance: auto;">
-        <option value="Cash on Delivery">💵 Cash on Delivery</option>
-        <option value="Benefit Pay">📱 Benefit Pay</option>
-        <option value="Credit/Debit Card">💳 Credit/Debit Card</option>
-    </select>
-    // Get payment method
-var payment = document.getElementById('paymentMethod').value;
-
-// Build message (add payment method)
-var message = "🍕 NABZ-TECH EATS - NEW ORDER %0A";
-message += "═══════════════════════════%0A%0A";
-
-message += "👤 Customer: " + name + "%0A";
-message += "📱 Phone: " + phone + "%0A";
-message += "📍 Address: " + address + "%0A";
-message += "💳 Payment: " + payment + "%0A%0A";  // <-- ADDED THIS LINE
-
-message += "───────────────────────────%0A";
-message += "🛒 ORDER SUMMARY %0A";
-message += "───────────────────────────%0A";
-
-// Rest of the order summary...
 
         <button class="checkout-btn" onclick="checkout()">
             <i class="fab fa-whatsapp"></i> Order via WhatsApp
@@ -540,7 +529,7 @@ message += "──────────────────────�
         }
 
         // ============================================================
-        // 8. CHECKOUT
+        // 8. CHECKOUT (WITH PAYMENT METHOD)
         // ============================================================
         function checkout() {
             if (cart.length === 0) {
@@ -551,6 +540,7 @@ message += "──────────────────────�
             var name = document.getElementById('customerName').value;
             var phone = document.getElementById('customerPhone').value;
             var address = document.getElementById('deliveryAddress').value;
+            var payment = document.getElementById('paymentMethod').value;
 
             if (!name) {
                 alert('👤 Please enter your full name.');
@@ -570,16 +560,18 @@ message += "──────────────────────�
                 return;
             }
 
-            var message = "🍕 NABZ-TECH EATS - NEW ORDER %0A";
-            message += "═══════════════════════════%0A%0A";
+            // Build WhatsApp message with payment method
+            var message = "🍕 NABZ-TECH EATS - NEW ORDER ";
+            message += "═══════════════════════════";
 
-            message += "👤 Customer: " + name + "%0A";
-            message += "📱 Phone: " + phone + "%0A";
-            message += "📍 Address: " + address + "%0A%0A";
+            message += "👤 Customer: " + name + "";
+            message += "📱 Phone: " + phone + "";
+            message += "📍 Address: " + address + "";
+            message += "💳 Payment: " + payment + "";
 
-            message += "───────────────────────────%0A";
-            message += "🛒 ORDER SUMMARY %0A";
-            message += "───────────────────────────%0A";
+            message += "───────────────────────────";
+            message += "🛒 ORDER SUMMARY ";
+            message += "───────────────────────────";
 
             var total = 0;
             var itemCount = 0;
@@ -587,17 +579,17 @@ message += "──────────────────────�
                 var itemTotal = cart[i].price * cart[i].quantity;
                 total += itemTotal;
                 itemCount += cart[i].quantity;
-                message += cart[i].quantity + "x " + cart[i].name + "%0A";
-                message += "   BD " + itemTotal.toFixed(2) + "%0A";
+                message += cart[i].quantity + "x " + cart[i].name + "";
+                message += "   BD " + itemTotal.toFixed(2) + "";
             }
 
-            message += "───────────────────────────%0A";
-            message += "📦 Total Items: " + itemCount + "%0A";
-            message += "💰 Total Amount: BD " + total.toFixed(2) + "%0A";
-            message += "───────────────────────────%0A%0A";
+            message += "───────────────────────────";
+            message += "📦 Total Items: " + itemCount + "";
+            message += "💰 Total Amount: BD " + total.toFixed(2) + "";
+            message += "───────────────────────────";
 
-            message += "⏰ Order Time: " + new Date().toLocaleString() + "%0A%0A";
-            message += "✅ Thank you for your order!%0A";
+            message += "⏰ Order Time: " + new Date().toLocaleString() + "";
+            message += "✅ Thank you for your order!";
             message += "📞 We will confirm shortly.";
 
             var whatsappNumber = '97333310359';
