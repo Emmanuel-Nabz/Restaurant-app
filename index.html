@@ -200,6 +200,19 @@
             border-top: 1px solid #ecf0f1;
             padding-top: 20px;
         }
+        .address-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            margin-top: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        .address-input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
         @media (max-width: 600px) {
             .app-header h1 { font-size: 1.8em; }
             .menu-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -233,6 +246,15 @@
             <span>Total:</span>
             <span id="cartTotal">BD 0.00</span>
         </div>
+        
+        <!-- ===== ✅ STEP 1: DELIVERY ADDRESS INPUT ===== -->
+        <div style="margin: 15px 0;">
+            <label style="font-weight: 600; display: block; margin-bottom: 5px;">
+                <i class="fas fa-map-pin"></i> Delivery Address:
+            </label>
+            <input type="text" id="deliveryAddress" class="address-input" placeholder="Enter your full address">
+        </div>
+
         <button class="checkout-btn" onclick="checkout()">
             <i class="fab fa-whatsapp"></i> Order via WhatsApp
         </button>
@@ -244,7 +266,7 @@
 
     <script>
         // ============================================================
-        // 1. FULL MENU WITH CATEGORIES (CLEAN VERSION)
+        // 1. FULL MENU WITH CATEGORIES (FIXED FILE NAMES)
         // ============================================================
         const menuCategories = [
             {
@@ -252,9 +274,9 @@
                 icon: "🍔",
                 items: [
                     { id: 1, name: "Classic Burger", desc: "Beef patty, lettuce, tomato, cheese", price: 2.50, image: "bagar.jpg" },
-                    { id: 2, name: "Cheese Burger", desc: "Double cheese, caramelized onions", price: 3.00, image: "beef bager.jpg"},
-                    { id: 3, name: "Chicken Burger", desc: "Grilled chicken, garlic mayo", price: 2.75, image: "chicken burgar.jpg" },
-                    { id: 4, name: "Veggie Burger", desc: "Plant-based patty, avocado", price: 3.25, image: "bagger veg.jpg" }
+                    { id: 2, name: "Cheese Burger", desc: "Double cheese, caramelized onions", price: 3.00, image: "beef-bager.jpg"},
+                    { id: 3, name: "Chicken Burger", desc: "Grilled chicken, garlic mayo", price: 2.75, image: "chicken-burgar.jpg" },
+                    { id: 4, name: "Veggie Burger", desc: "Plant-based patty, avocado", price: 3.25, image: "bagger-veg.jpg" }
                 ]
             },
             {
@@ -262,8 +284,8 @@
                 icon: "🍕",
                 items: [
                     { id: 5, name: "Margherita Pizza", desc: "Tomato, mozzarella, basil", price: 3.00, image: "pizza.jpg" },
-                    { id: 6, name: "Pepperoni Pizza", desc: "Pepperoni, cheese, tomato sauce", price: 3.50, image: "pizaa 2.jpg" },
-                    { id: 7, name: "Veggie Pizza", desc: "Bell peppers, mushrooms, olives", price: 3.25, image: "pizza veg.jpg" },
+                    { id: 6, name: "Pepperoni Pizza", desc: "Pepperoni, cheese, tomato sauce", price: 3.50, image: "pizza-2.jpg" },
+                    { id: 7, name: "Veggie Pizza", desc: "Bell peppers, mushrooms, olives", price: 3.25, image: "pizza-veg.jpg" },
                     { id: 8, name: "BBQ Chicken Pizza", desc: "BBQ sauce, chicken, red onions", price: 4.00, image: "pizza.jpg" }
                 ]
             },
@@ -271,8 +293,8 @@
                 name: "Wraps & Sandwiches",
                 icon: "🌯",
                 items: [
-                    { id: 9, name: "Chicken Wrap", desc: "Grilled chicken, veggies, garlic sauce", price: 2.00, image: "sandwich 3.jpg" },
-                    { id: 10, name: "Falafel Wrap", desc: "Falafel, tahini, pickles, salad", price: 1.75, image: "sandwich 4.jpg" },
+                    { id: 9, name: "Chicken Wrap", desc: "Grilled chicken, veggies, garlic sauce", price: 2.00, image: "sandwich-3.jpg" },
+                    { id: 10, name: "Falafel Wrap", desc: "Falafel, tahini, pickles, salad", price: 1.75, image: "sandwich-4.jpg" },
                     { id: 11, name: "Club Sandwich", desc: "Triple layer, chicken, bacon, lettuce", price: 2.50, image: "sandwich.jpg" }
                 ]
             },
@@ -280,9 +302,9 @@
                 name: "Sides",
                 icon: "🍟",
                 items: [
-                    { id: 12, name: "French Fries", desc: "Crispy golden fries", price: 1.00 , image:"flies 2.jpg"},
-                    { id: 13, name: "Cheese Fries", desc: "Fries topped with melted cheese", price: 1.50 ,image:"flies.jpg"},
-                    { id: 14, name: "Onion Rings", desc: "Crispy battered onion rings", price: 1.25 , image:"french flies.jpg"},
+                    { id: 12, name: "French Fries", desc: "Crispy golden fries", price: 1.00 , image:"fries-2.jpg"},
+                    { id: 13, name: "Cheese Fries", desc: "Fries topped with melted cheese", price: 1.50 ,image:"fries.jpg"},
+                    { id: 14, name: "Onion Rings", desc: "Crispy battered onion rings", price: 1.25 , image:"french-fries.jpg"},
                     { id: 15, name: "Chicken Nuggets", desc: "6 pieces, crispy & tender", price: 1.75 , image:"nuggets.jpg"}
                 ]
             },
@@ -293,7 +315,7 @@
                     { id: 16, name: "Coca-Cola", desc: "Classic cold drink", price: 1.00 ,image:"cola.jpg"},
                     { id: 17, name: "Pepsi", desc: "Cold drink", price: 1.00 , image:"pepsi.jpg"},
                     { id: 18, name: "Sprite", desc: "Lemon-lime soda", price: 1.00 , image:"sprite.jpg"},
-                    { id: 19, name: "Fresh Juice", desc: "Orange, mango, or apple", price: 1.50 ,image:"fresh juice.jpg"},
+                    { id: 19, name: "Fresh Juice", desc: "Orange, mango, or apple", price: 1.50 ,image:"fresh-juice.jpg"},
                     { id: 20, name: "Milkshake", desc: "Chocolate, strawberry, or vanilla", price: 1.75, image:"milkshake.jpg" }
                 ]
             },
@@ -303,7 +325,7 @@
                 items: [
                     { id: 21, name: "Ice Cream", desc: "Vanilla or chocolate scoop", price: 1.50, image:"dessert.jpg" },
                     { id: 22, name: "Brownie", desc: "Warm chocolate brownie", price: 1.75, image:"dessert1.jpg" },
-                    { id: 23, name: "Cheesecake", desc: "New York style cheesecake", price: 2.00, image:"dessert2" }
+                    { id: 23, name: "Cheesecake", desc: "New York style cheesecake", price: 2.00, image:"dessert2.jpg" }
                 ]
             }
         ];
@@ -317,49 +339,48 @@
         // 3. RENDER MENU
         // ============================================================
         function renderMenu() {
-    const container = document.getElementById('menuContainer');
-    if (!container) {
-        console.error('menuContainer not found!');
-        return;
-    }
-    container.innerHTML = '';
-
-    menuCategories.forEach(function(category) {
-        const title = document.createElement('div');
-        title.className = 'category-title';
-        title.textContent = category.icon + ' ' + category.name;
-        container.appendChild(title);
-
-        const grid = document.createElement('div');
-        grid.className = 'menu-grid';
-
-        category.items.forEach(function(item) {
-            const div = document.createElement('div');
-            div.className = 'menu-item';
-            div.id = 'item-' + item.id;
-
-            // ==== FIX: Use image if available, otherwise use emoji ====
-            var imageHtml = '';
-            if (item.image) {
-                imageHtml = '<img src="' + item.image + '" alt="' + item.name + '" style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; margin-bottom: 8px;">';
-            } else {
-                imageHtml = '<div class="icon">' + category.icon + '</div>';
+            const container = document.getElementById('menuContainer');
+            if (!container) {
+                console.error('menuContainer not found!');
+                return;
             }
+            container.innerHTML = '';
 
-            div.innerHTML = 
-                imageHtml +
-                '<h3>' + item.name + '</h3>' +
-                '<div class="desc">' + item.desc + '</div>' +
-                '<div class="price">BD ' + item.price.toFixed(2) + '</div>' +
-                '<button class="add-btn" onclick="addToCart(' + item.id + ')">' +
-                '<i class="fas fa-plus"></i> Add' +
-                '</button>';
-            grid.appendChild(div);
-        });
+            menuCategories.forEach(function(category) {
+                const title = document.createElement('div');
+                title.className = 'category-title';
+                title.textContent = category.icon + ' ' + category.name;
+                container.appendChild(title);
 
-        container.appendChild(grid);
-    });
-}
+                const grid = document.createElement('div');
+                grid.className = 'menu-grid';
+
+                category.items.forEach(function(item) {
+                    const div = document.createElement('div');
+                    div.className = 'menu-item';
+                    div.id = 'item-' + item.id;
+
+                    var imageHtml = '';
+                    if (item.image) {
+                        imageHtml = '<img src="' + item.image + '" alt="' + item.name + '" style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; margin-bottom: 8px;">';
+                    } else {
+                        imageHtml = '<div class="icon">' + category.icon + '</div>';
+                    }
+
+                    div.innerHTML = 
+                        imageHtml +
+                        '<h3>' + item.name + '</h3>' +
+                        '<div class="desc">' + item.desc + '</div>' +
+                        '<div class="price">BD ' + item.price.toFixed(2) + '</div>' +
+                        '<button class="add-btn" onclick="addToCart(' + item.id + ')">' +
+                        '<i class="fas fa-plus"></i> Add' +
+                        '</button>';
+                    grid.appendChild(div);
+                });
+
+                container.appendChild(grid);
+            });
+        }
 
         // ============================================================
         // 4. ADD TO CART
@@ -456,11 +477,19 @@
         }
 
         // ============================================================
-        // 8. CHECKOUT
+        // ✅ STEP 2: UPDATED CHECKOUT (Includes Address)
         // ============================================================
         function checkout() {
             if (cart.length === 0) {
                 alert('🛒 Your cart is empty! Add some items first.');
+                return;
+            }
+
+            // Get the delivery address
+            var address = document.getElementById('deliveryAddress').value;
+            if (!address) {
+                alert('📍 Please enter your delivery address.');
+                document.getElementById('deliveryAddress').focus();
                 return;
             }
 
@@ -472,10 +501,10 @@
                 message += "✅ " + cart[i].quantity + "x " + cart[i].name + " - BD " + itemTotal.toFixed(2) + "%0A";
             }
             message += "%0A*Total: BD " + total.toFixed(2) + "*%0A%0A";
-            message += "📍 Delivery Address: [Please add your address]";
+            message += "📍 Delivery Address: " + address;
 
-            var phone = '97333310359';
-            var url = 'https://wa.me/' + phone + '?text=' + message;
+            var phone = '97333310360'; // Fixed to your correct number
+            var url = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
             window.open(url, '_blank');
         }
 
