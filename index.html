@@ -634,6 +634,21 @@
     ============================================================ -->
     <script>
         // ============================================================
+// CLOSE CONFIRMATION - GLOBAL FIX
+// ============================================================
+window.closeConfirmation = function() {
+    console.log("Close button clicked!"); // Debug log to see if it's working
+    var modal = document.getElementById('confirmationModal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.remove();
+    }
+    var popup = document.getElementById('verificationPopup');
+    if (popup) {
+        popup.remove();
+    }
+};
+        // ============================================================
         // 1. CONSTANTS
         // ============================================================
         const DELIVERY_FEE = 0.500;
