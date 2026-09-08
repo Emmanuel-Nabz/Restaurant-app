@@ -89,7 +89,7 @@
         }
 
         /* ============================================================
-           MENU ITEMS - SAME LAYOUT ON ALL DEVICES
+           MENU ITEMS
            ============================================================ */
         .menu-item-large {
             display: flex;
@@ -341,7 +341,7 @@
         }
 
         /* ============================================================
-           RESPONSIVE - SAME LAYOUT, SMALLER ON MOBILE
+           RESPONSIVE
            ============================================================ */
         @media (max-width: 600px) {
             .app-header h1 {
@@ -350,15 +350,14 @@
             .app-header p {
                 font-size: 0.9em;
             }
-            /* KEEP SIDE-BY-SIDE LAYOUT, JUST SMALLER */
             .menu-item-large {
                 gap: 12px;
                 padding: 12px;
                 margin-bottom: 12px;
             }
             .menu-item-large .item-image {
-                width: 90px;
-                height: 90px;
+                width: 70px;
+                height: 70px;
                 border-radius: 10px;
             }
             .menu-item-large .item-details h3 {
@@ -460,10 +459,11 @@
                 <input type="tel" id="customerPhone" class="input-field" placeholder="Enter your phone number">
             </div>
 
+            <!-- ===== DELIVERY ADDRESS WITH GOOGLE AUTOCOMPLETE ===== -->
             <div class="form-group">
                 <label><i class="fas fa-map-pin"></i> Delivery Address:</label>
                 <div style="display: flex; gap: 10px;">
-                    <input type="text" id="deliveryAddress" class="input-field" placeholder="Enter your full address" style="flex: 1;">
+                    <input type="text" id="deliveryAddress" class="input-field" placeholder="Start typing your address..." style="flex: 1;">
                     <button onclick="shareLocation()" class="location-btn">
                         <i class="fas fa-location-dot"></i> Share
                     </button>
@@ -556,9 +556,7 @@
                 { id: 13, name: "Coca-Cola", desc: "Classic cold drink", price: 1.00, image: "cola.jpg" },
                 { id: 14, name: "Pepsi", desc: "Cold drink", price: 1.00, image: "pepsi.jpg" },
                 { id: 15, name: "Milkshake", desc: "Chocolate, strawberry, or vanilla", price: 1.75,
-                    image: "milkshake.jpg" },
-                    { id: 19, name: "Fresh Juice", desc: "Orange, Mango, or Pinapple Juice", price: 1.50, image: "fresh juice.jpg" }
-
+                    image: "milkshake.jpg" }
             ]
         }, {
             name: "Desserts",
@@ -902,7 +900,48 @@
         renderTabs();
         renderMenu();
         renderCart();
+
+        // ============================================================
+        // 14. GOOGLE PLACES AUTOCOMPLETE
+        // ============================================================
+        var autocomplete;
+
+        function initAutocomplete() {
+            var input = document.getElementById('deliveryAddress');
+            if (!input) return;
+
+            try {
+                autocomplete = new google.maps.places.Autocomplete(
+                    input,
+                    {
+                        types: ['geocode', 'establishment'],
+                        componentRestrictions: { country: 'bh' }
+                    }
+                );
+
+                autocomplete.addListener('place_changed', function() {
+                    var place = autocomplete.getPlace();
+                    if (place.formatted_address) {
+                        document.getElementById('deliveryAddress').value = place.formatted_address;
+                        var status = document.getElementById('locationStatus');
+                        status.textContent = '✅ Address selected: ' + place.formatted_address;
+                        status.style.color = '#27ae60';
+                    }
+                });
+            } catch (e) {
+                console.log('Google Places error:', e);
+            }
+        }
+
+        function gm_authFailure() {
+            var status = document.getElementById('locationStatus');
+            status.textContent = '⚠️ Address search unavailable. Please enter address manually.';
+            status.style.color = '#e74c3c';
+        }
     </script>
+
+    <!-- ===== GOOGLE PLACES API ===== -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDaj0a35GeLvHnnDIA4cofzY_ozz_39iis&libraries=places&callback=initAutocomplete" async defer></script>
 
     <!-- ===== SERVICE WORKER ===== -->
     <script>
