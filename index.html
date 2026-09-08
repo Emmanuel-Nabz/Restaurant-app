@@ -143,16 +143,16 @@
             }
 
             div.innerHTML = `
-                <img src="${item.image || 'https://via.placeholder.com/100'}" alt="${item.name}" class="item-image" onerror="this.src='https://via.placeholder.com/100?text=🍽️'">
-                <div class="item-details">
-                    <h3>${catIcon} ${item.name}</h3>
-                    <div class="desc">${item.desc}</div>
-                    <div class="price">BD ${item.price.toFixed(2)}</div>
-                    <button class="add-btn" onclick="addToCart(${item.id})">
-                        <i class="fas fa-plus"></i> Add
-                    </button>
-                </div>
-            `;
+                    <img src="${item.image || 'https://via.placeholder.com/100'}" alt="${item.name}" class="item-image" onerror="this.src='https://via.placeholder.com/100?text=🍽️'">
+                    <div class="item-details">
+                        <h3>${catIcon} ${item.name}</h3>
+                        <div class="desc">${item.desc}</div>
+                        <div class="price">BD ${item.price.toFixed(2)}</div>
+                        <button class="add-btn" onclick="addToCart(${item.id})">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                `;
             container.appendChild(div);
         });
     }
@@ -248,14 +248,14 @@
             var itemTotal = cart[i].price * cart[i].quantity;
             subtotal += itemTotal;
             html += `
-                <div class="cart-item">
-                    <span class="item-name">${cart[i].name} x${cart[i].quantity}</span>
-                    <span>
-                        <span class="item-price">BD ${itemTotal.toFixed(2)}</span>
-                        <button class="remove-btn" onclick="removeFromCart(${cart[i].id})">×</button>
-                    </span>
-                </div>
-            `;
+                    <div class="cart-item">
+                        <span class="item-name">${cart[i].name} x${cart[i].quantity}</span>
+                        <span>
+                            <span class="item-price">BD ${itemTotal.toFixed(2)}</span>
+                            <button class="remove-btn" onclick="removeFromCart(${cart[i].id})">×</button>
+                        </span>
+                    </div>
+                `;
         }
         cartContainer.innerHTML = html;
 
@@ -283,10 +283,7 @@
                     status.textContent = '✅ Location opened in Google Maps. Copy the address and tap "Paste" below.';
                     status.style.color = '#27ae60';
 
-                    // Show the paste button
                     pasteBtn.style.display = 'flex';
-
-                    // Store the location for pasting
                     window.tempLocation = { lat: lat, lng: lng };
                 },
                 function(error) {
@@ -444,7 +441,6 @@
                     Choose how to receive your code:
                 </p>
 
-                <!-- Delivery Method Buttons -->
                 <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
                     <button onclick="sendViaWhatsApp()" style="
                         background: #25D366;
@@ -472,10 +468,8 @@
                     </button>
                 </div>
 
-                <!-- Status -->
                 <div id="deliveryStatus" style="font-size: 0.85em; min-height: 24px; margin-bottom: 15px; color: #7f8c8d;"></div>
 
-                <!-- OTP Input (hidden until code is sent) -->
                 <div id="otpSection" style="display: none;">
                     <p style="color: #7f8c8d; font-size: 0.9em; margin-bottom: 15px;">
                         We sent a code to <strong>${phone}</strong>
@@ -541,7 +535,7 @@
     }
 
     // ============================================================
-    // CLOSE VERIFICATION POPUP
+    // CLOSE VERIFICATION POPUP (GLOBAL)
     // ============================================================
     function closeVerificationPopup() {
         var popup = document.getElementById('verificationPopup');
@@ -565,7 +559,6 @@
         status.textContent = '✅ Code sent via WhatsApp! Check your messages.';
         status.style.color = '#25D366';
 
-        // Show OTP input section
         document.getElementById('otpSection').style.display = 'block';
         setTimeout(function() {
             var otpInput = document.getElementById('otpInput');
@@ -586,7 +579,6 @@
             status.textContent = '✅ Code sent via SMS! Check your messages.';
             status.style.color = '#3498db';
 
-            // Show OTP input section
             document.getElementById('otpSection').style.display = 'block';
             setTimeout(function() {
                 var otpInput = document.getElementById('otpInput');
@@ -652,7 +644,7 @@
     }
 
     // ============================================================
-    // PLACE ORDER (AFTER VERIFICATION)
+    // PLACE ORDER
     // ============================================================
     function placeOrder() {
         var data = window.tempOrderData;
@@ -776,14 +768,14 @@
     }
 
     // ============================================================
-    // 14. START
+    // START
     // ============================================================
     renderTabs();
     renderMenu();
     renderCart();
 
     // ============================================================
-    // 15. GOOGLE PLACES AUTOCOMPLETE
+    // GOOGLE PLACES AUTOCOMPLETE
     // ============================================================
     var autocomplete;
 
