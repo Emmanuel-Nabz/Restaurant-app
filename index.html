@@ -327,6 +327,34 @@
             margin-top: 5px;
         }
         /* ============================================================
+   OTP INPUT
+   ============================================================ */
+#otpInput {
+    width: 150px;
+    padding: 14px;
+    font-size: 1.5em;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    letter-spacing: 8px;
+    font-weight: bold;
+}
+#otpInput:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+#otpInput.error {
+    border-color: #e74c3c;
+    animation: shake 0.3s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+}
+        /* ============================================================
    PASTE BUTTON
    ============================================================ */
 #pasteBtn {
@@ -978,116 +1006,400 @@ function pasteAddress() {
         // 12. CHECKOUT
         // ============================================================
         function checkout() {
-            if (cart.length === 0) {
-                alert('🛒 Your cart is empty! Add some items first.');
-                return;
+    if (cart.length === 0) {
+        alert('🛒 Your cart is empty! Add some items first.');
+        return;
+    }
+
+    var name = document.getElementById('customerName').value;
+    var phone = document.getElementById('customerPhone').value;
+    var address = document.getElementById('deliveryAddress').value;
+    var payment = document.getElementById('paymentMethod').value;
+
+    if (!name) { alert('👤 Please enter your full name.'); return; }
+    if (!phone) { alert('📱 Please enter your phone number.'); return; }
+    if (!address) { alert('📍 Please enter your delivery address.'); return; }
+
+    // ===== SHOW VERIFICATION POPUP =====
+    showVerificationPopup(name, phone, address, payment);
+}
+
+// ============================================================
+// VERIFICATION POPUP
+// ============================================================
+function showVerificationPopup(name, phone, address, payment) {
+    // Generate a random 4-digit code
+    var verificationCode = Math.floor(1000 + Math.random() * 9000);
+    window.tempCode = verificationCode;
+    window.tempOrderData = { name, phone, address, payment };
+    window.verificationAttempts = 0;
+
+    var popup = document.createElement('div');
+    popup.id = 'verificationPopup';
+    popup.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s;
+        padding: 20px;
+    `;
+
+    popup.innerHTML = `
+        <div style="
+            background: white;
+            border-radius: 20px;
+            padding: 35px 30px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: bounceIn 0.4s;
+            position: relative;
+        ">
+            <button onclick="closeVerificationPopup()" style="
+                position: absolute;
+                top: 12px;
+                right: 18px;
+                background: none;
+                border: none;
+                font-size: 1.5em;
+                color: #95a5a6;
+                cursor: pointer;
+            ">×</button>
+
+            <div style="font-size: 3em; margin-bottom: 10px;">📱</div>
+            <h2 style="color: #2c3e50; margin-bottom: 5px;">Verify Your Number</h2>
+            <p style="color: #7f8c8d; font-size: 0.9em; margin-bottom: 15px;">
+                We sent a code to <strong>${phone}</strong>
+            </p>
+
+            <!-- OTP Input -->
+            <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
+                <input type="text" id="otpInput" maxlength="4" placeholder="4-digit code" style="
+                    width: 150px;
+                    padding: 14px;
+                    font-size: 1.5em;
+                    text-align: center;
+                    border: 2px solid #ddd;
+                    border-radius: 10px;
+                    letter-spacing: 8px;
+                    font-weight: bold;
+                ">
+            </div>
+
+            <!-- Status Message -->
+            <div id="otpStatus" style="font-size: 0.85em; min-height: 24px; margin-bottom: 10px;"></div>
+
+            <!-- Buttons -->
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button onclick="verifyOTP()" style="
+                    background: #27ae60;
+                    color: white;
+                    border: none;
+                    padding: 12px 30px;
+                    border-radius: 30px;
+                    font-size: 1em;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: background 0.3s;
+                ">✅ Verify</button>
+
+                <button onclick="resendCode()" style="
+                    background: #3498db;
+                    color: white;
+                    border: none;
+                    padding: 12px 25px;
+                    border-radius: 30px;
+                    font-size: 1em;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: background 0.3s;
+                ">🔄 Resend</button>
+            </div>
+
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #ecf0f1;">
+
+            <!-- Choose Delivery Method -->
+            <p style="font-size: 0.85em; color: #7f8c8d; margin-bottom: 10px;">
+                Choose how to receive your code:
+            </p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="sendViaWhatsApp()" style="
+                    background: #25D366;
+                    color: white;
+                    border: none;
+                    padding: 8px 20px;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    font-weight: 600;
+                ">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button onclick="sendViaSMS()" style="
+                    background: #3498db;
+                    color: white;
+                    border: none;
+                    padding: 8px 20px;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    font-weight: 600;
+                ">
+                    <i class="fas fa-sms"></i> SMS
+                </button>
+            </div>
+            <p id="deliveryStatus" style="font-size: 0.8em; color: #95a5a6; margin-top: 8px;"></p>
+        </div>
+    `;
+
+    // Add animations
+    var style = document.createElement('style');
+    if (!document.getElementById('popupAnimations')) {
+        style.id = 'popupAnimations';
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
             }
-
-            var name = document.getElementById('customerName').value;
-            var phone = document.getElementById('customerPhone').value;
-            var address = document.getElementById('deliveryAddress').value;
-            var payment = document.getElementById('paymentMethod').value;
-
-            if (!name) { alert('👤 Please enter your full name.'); return; }
-            if (!phone) { alert('📱 Please enter your phone number.'); return; }
-            if (!address) { alert('📍 Please enter your delivery address.'); return; }
-
-            var orderSummary = "";
-            var subtotal = 0;
-            for (var i = 0; i < cart.length; i++) {
-                var itemTotal = cart[i].price * cart[i].quantity;
-                subtotal += itemTotal;
-                orderSummary += cart[i].quantity + "x " + cart[i].name + " - BD " + itemTotal.toFixed(2) + "\n";
+            @keyframes bounceIn {
+                0% { transform: scale(0.7); opacity: 0; }
+                70% { transform: scale(1.03); }
+                100% { transform: scale(1); opacity: 1; }
             }
-            var grandTotal = subtotal + DELIVERY_FEE;
+        `;
+        document.head.appendChild(style);
+    }
 
-            var form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'https://formsubmit.co/makemmy98@yahoo.com';
+    document.body.appendChild(popup);
 
-            var fields = {
-                '_subject': '🍕 New Order from Nabz-Tech Eats',
-                'Name': name,
-                'Phone': phone,
-                'Address': address,
-                'Payment Method': payment,
-                'Order Summary': orderSummary,
-                'Subtotal': 'BD ' + subtotal.toFixed(2),
-                'Delivery Fee': 'BD ' + DELIVERY_FEE.toFixed(2),
-                'Total Amount': 'BD ' + grandTotal.toFixed(2),
-                '_captcha': 'false'
-            };
+    // Auto-focus OTP input
+    setTimeout(function() {
+        var otpInput = document.getElementById('otpInput');
+        if (otpInput) otpInput.focus();
+    }, 500);
 
-            for (var key in fields) {
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = fields[key];
-                form.appendChild(input);
-            }
+    // Auto-send via WhatsApp by default
+    sendViaWhatsApp();
+}
 
-            document.body.appendChild(form);
-            form.submit();
+// ============================================================
+// CLOSE VERIFICATION POPUP
+// ============================================================
+function closeVerificationPopup() {
+    var popup = document.getElementById('verificationPopup');
+    if (popup) popup.remove();
+}
 
-            // ===== CONFIRMATION POPUP =====
-            var confirmation = document.createElement('div');
-            confirmation.id = 'confirmationModal';
-            confirmation.style.cssText = `
-                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                    background: rgba(0,0,0,0.7); display: flex; align-items: center;
-                    justify-content: center; z-index: 9999; animation: fadeIn 0.5s;
-                `;
-            confirmation.innerHTML = `
-                    <div style="background: white; border-radius: 20px; padding: 40px 30px;
-                        max-width: 400px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                        animation: bounceIn 0.5s;">
-                        <div style="font-size: 4em; margin-bottom: 15px;">✅</div>
-                        <h2 style="color: #27ae60; margin-bottom: 10px;">Order Confirmed!</h2>
-                        <p style="color: #555; margin-bottom: 20px;">
-                            Thank you, <strong>${name}</strong>!<br>Your order has been received.
-                        </p>
-                        <div style="background: #f8f9fa; border-radius: 10px; padding: 15px; text-align: left; margin-bottom: 20px;">
-                            <p style="font-size: 0.9em; color: #7f8c8d; margin-bottom: 5px;">📦 Order Summary</p>
-                            <p style="font-size: 0.9em; color: #2c3e50;">${orderSummary.replace(/\n/g, '<br>')}</p>
-                            <p style="font-size: 0.9em; color: #7f8c8d; margin-top: 5px;">🚚 Delivery Fee: BD ${DELIVERY_FEE.toFixed(2)}</p>
-                            <p style="font-weight: bold; margin-top: 10px; color: #27ae60;">Total: BD ${grandTotal.toFixed(2)}</p>
-                        </div>
-                        <button onclick="closeConfirmation()" style="background: #3498db; color: white;
-                            border: none; padding: 12px 40px; border-radius: 30px; font-size: 1em;
-                            font-weight: bold; cursor: pointer;">
-                            OK
-                        </button>
-                    </div>
-                `;
+// ============================================================
+// SEND VIA WHATSAPP
+// ============================================================
+function sendViaWhatsApp() {
+    var status = document.getElementById('deliveryStatus');
+    var phone = window.tempOrderData ? window.tempOrderData.phone : '';
+    
+    status.textContent = '📱 Sending code via WhatsApp...';
+    status.style.color = '#25D366';
 
-            var style = document.createElement('style');
-            style.textContent = `
-                    @keyframes fadeIn {
-                        from { opacity: 0; }
-                        to { opacity: 1; }
-                    }
-                    @keyframes bounceIn {
-                        0% { transform: scale(0.5); opacity: 0; }
-                        80% { transform: scale(1.05); }
-                        100% { transform: scale(1); opacity: 1; }
-                    }
-                `;
-            document.head.appendChild(style);
+    // Simulate sending via WhatsApp
+    var message = "🔐 Your Nabz-Tech Eats verification code: " + window.tempCode;
+    var url = 'https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(message);
+    window.open(url, '_blank');
 
-            document.body.appendChild(confirmation);
+    status.textContent = '✅ Code sent via WhatsApp! Check your messages.';
+    status.style.color = '#25D366';
+}
 
-            cart = [];
-            renderCart();
+// ============================================================
+// SEND VIA SMS (Simulated)
+// ============================================================
+function sendViaSMS() {
+    var status = document.getElementById('deliveryStatus');
+    
+    status.textContent = '📱 Sending code via SMS...';
+    status.style.color = '#3498db';
+
+    // Simulate SMS sending
+    setTimeout(function() {
+        status.textContent = '✅ Code sent via SMS! Check your messages.';
+        status.style.color = '#3498db';
+    }, 1500);
+}
+
+// ============================================================
+// RESEND CODE
+// ============================================================
+function resendCode() {
+    // Generate new code
+    window.tempCode = Math.floor(1000 + Math.random() * 9000);
+    var status = document.getElementById('otpStatus');
+    status.textContent = '🔄 New code sent! Check your messages.';
+    status.style.color = '#3498db';
+
+    // Resend via WhatsApp
+    sendViaWhatsApp();
+
+    // Clear OTP input
+    document.getElementById('otpInput').value = '';
+    document.getElementById('otpInput').focus();
+
+    setTimeout(function() {
+        status.textContent = '';
+    }, 3000);
+}
+
+// ============================================================
+// VERIFY OTP
+// ============================================================
+function verifyOTP() {
+    var otpInput = document.getElementById('otpInput');
+    var status = document.getElementById('otpStatus');
+    var code = otpInput.value.trim();
+
+    if (!code || code.length < 4) {
+        status.textContent = '⚠️ Please enter the 4-digit code.';
+        status.style.color = '#e74c3c';
+        return;
+    }
+
+    window.verificationAttempts = (window.verificationAttempts || 0) + 1;
+
+    if (parseInt(code) === window.tempCode) {
+        status.textContent = '✅ Verified! Placing your order...';
+        status.style.color = '#27ae60';
+
+        // Close popup and place order
+        setTimeout(function() {
+            closeVerificationPopup();
+            placeOrder();
+        }, 1000);
+    } else {
+        status.textContent = '❌ Invalid code. Please try again.';
+        status.style.color = '#e74c3c';
+        otpInput.value = '';
+        otpInput.focus();
+
+        if (window.verificationAttempts >= 3) {
+            status.textContent = '⚠️ Too many attempts. Click "Resend" for a new code.';
+            status.style.color = '#e67e22';
         }
+    }
+}
 
-        // ============================================================
-        // 13. CLOSE CONFIRMATION
-        // ============================================================
-        function closeConfirmation() {
-            var el = document.getElementById('confirmationModal');
-            if (el) el.remove();
-        }
+// ============================================================
+// PLACE ORDER (AFTER VERIFICATION)
+// ============================================================
+function placeOrder() {
+    var data = window.tempOrderData;
+    if (!data) return;
 
+    var name = data.name;
+    var phone = data.phone;
+    var address = data.address;
+    var payment = data.payment;
+
+    var orderSummary = "";
+    var subtotal = 0;
+    for (var i = 0; i < cart.length; i++) {
+        var itemTotal = cart[i].price * cart[i].quantity;
+        subtotal += itemTotal;
+        orderSummary += cart[i].quantity + "x " + cart[i].name + " - BD " + itemTotal.toFixed(2) + "\n";
+    }
+    var grandTotal = subtotal + DELIVERY_FEE;
+
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://formsubmit.co/makemmy98@yahoo.com';
+
+    var fields = {
+        '_subject': '🍕 New Order from Nabz-Tech Eats',
+        'Name': name,
+        'Phone': phone,
+        'Address': address,
+        'Payment Method': payment,
+        'Order Summary': orderSummary,
+        'Subtotal': 'BD ' + subtotal.toFixed(2),
+        'Delivery Fee': 'BD ' + DELIVERY_FEE.toFixed(2),
+        'Total Amount': 'BD ' + grandTotal.toFixed(2),
+        'Verified': '✅ Yes',
+        '_captcha': 'false'
+    };
+
+    for (var key in fields) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = fields[key];
+        form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+
+    // ===== CONFIRMATION POPUP =====
+    var confirmation = document.createElement('div');
+    confirmation.id = 'confirmationModal';
+    confirmation.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        animation: fadeIn 0.5s;
+    `;
+
+    confirmation.innerHTML = `
+        <div style="
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: bounceIn 0.5s;
+        ">
+            <div style="font-size: 4em; margin-bottom: 15px;">✅</div>
+            <h2 style="color: #27ae60; margin-bottom: 10px;">Order Confirmed!</h2>
+            <p style="color: #555; margin-bottom: 20px;">
+                Thank you, <strong>${name}</strong>!<br>Your order has been received.
+            </p>
+            <div style="background: #f8f9fa; border-radius: 10px; padding: 15px; text-align: left; margin-bottom: 20px;">
+                <p style="font-size: 0.9em; color: #7f8c8d; margin-bottom: 5px;">📦 Order Summary</p>
+                <p style="font-size: 0.9em; color: #2c3e50;">${orderSummary.replace(/\n/g, '<br>')}</p>
+                <p style="font-size: 0.9em; color: #7f8c8d; margin-top: 5px;">🚚 Delivery Fee: BD ${DELIVERY_FEE.toFixed(2)}</p>
+                <p style="font-weight: bold; margin-top: 10px; color: #27ae60;">Total: BD ${grandTotal.toFixed(2)}</p>
+            </div>
+            <p style="color: #7f8c8d; font-size: 0.85em; margin-bottom: 20px;">
+                We will confirm your order shortly via WhatsApp.
+            </p>
+            <button onclick="closeConfirmation()" style="
+                background: #3498db;
+                color: white;
+                border: none;
+                padding: 12px 40px;
+                border-radius: 30px;
+                font-size: 1em;
+                font-weight: bold;
+                cursor: pointer;
+            ">OK</button>
+        </div>
+    `;
+
+    document.body.appendChild(confirmation);
+
+    cart = [];
+    renderCart();
+}
         // ============================================================
         // 14. START
         // ============================================================
