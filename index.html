@@ -21,6 +21,9 @@
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
     
+    <!-- ============================================================
+    CSS STARTS HERE
+    ============================================================ -->
     <style>
         /* ============================================================
            RESET & BASE
@@ -341,6 +344,62 @@
         }
 
         /* ============================================================
+           BOTTOM NAVIGATION BAR
+           ============================================================ */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0 12px;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border-top: 1px solid #ecf0f1;
+        }
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #95a5a6;
+            font-size: 0.7em;
+            transition: color 0.3s;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 12px;
+            position: relative;
+        }
+        .bottom-nav .nav-item i {
+            font-size: 1.5em;
+            margin-bottom: 2px;
+        }
+        .bottom-nav .nav-item:hover {
+            color: #3498db;
+        }
+        .bottom-nav .nav-item.active {
+            color: #e67e22;
+        }
+        .bottom-nav .nav-item .badge {
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7em;
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            display: none;
+        }
+        .bottom-nav .nav-item .badge.show {
+            display: inline;
+        }
+
+        /* ============================================================
            RESPONSIVE
            ============================================================ */
         @media (max-width: 600px) {
@@ -401,6 +460,10 @@
             }
         }
     </style>
+    <!-- ============================================================
+    CSS ENDS HERE
+    ============================================================ -->
+
 </head>
 <body>
 
@@ -417,7 +480,7 @@
     <div id="menuContainer"></div>
 
     <!-- ===== CART ===== -->
-    <div class="cart-section">
+    <div class="cart-section" id="cartSection">
         <h2>
             <i class="fas fa-shopping-cart"></i>
             Your Order
@@ -444,7 +507,7 @@
         </div>
 
         <!-- ===== CONTACT DETAILS ===== -->
-        <div style="margin-top: 20px; padding-top: 15px; border-top: 2px dashed #ecf0f1;">
+        <div style="margin-top: 20px; padding-top: 15px; border-top: 2px dashed #ecf0f1;" id="contactSection">
             <h3 style="color: #2c3e50; margin-bottom: 10px;">
                 <i class="fas fa-user-circle"></i> Contact Details
             </h3>
@@ -459,7 +522,6 @@
                 <input type="tel" id="customerPhone" class="input-field" placeholder="Enter your phone number">
             </div>
 
-            <!-- ===== DELIVERY ADDRESS WITH GOOGLE AUTOCOMPLETE ===== -->
             <div class="form-group">
                 <label><i class="fas fa-map-pin"></i> Delivery Address:</label>
                 <div style="display: flex; gap: 10px;">
@@ -490,6 +552,27 @@
     <!-- ===== FOOTER ===== -->
     <div class="footer">
         <p>&copy; 2026 Nabz-Tech Eats. All rights reserved.</p>
+    </div>
+
+    <!-- ===== BOTTOM NAVIGATION BAR ===== -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="scrollToTop()">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" onclick="scrollToMenu()">
+            <i class="fas fa-utensils"></i>
+            <span>Menu</span>
+        </button>
+        <button class="nav-item" onclick="scrollToCart()">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Cart</span>
+            <span class="badge" id="navCartBadge"></span>
+        </button>
+        <button class="nav-item" onclick="scrollToContact()">
+            <i class="fas fa-envelope"></i>
+            <span>Contact</span>
+        </button>
     </div>
 
     <!-- ============================================================
@@ -715,12 +798,22 @@
             var subtotalSpan = document.getElementById('subtotal');
             var grandTotalSpan = document.getElementById('grandTotal');
             var badge = document.getElementById('cartBadge');
+            var navBadge = document.getElementById('navCartBadge');
 
             var totalItems = 0;
             for (var i = 0; i < cart.length; i++) {
                 totalItems += cart[i].quantity;
             }
             badge.textContent = totalItems;
+
+            if (navBadge) {
+                navBadge.textContent = totalItems;
+                if (totalItems === 0) {
+                    navBadge.classList.remove('show');
+                } else {
+                    navBadge.classList.add('show');
+                }
+            }
 
             if (cart.length === 0) {
                 cartContainer.innerHTML = '<div class="empty-cart">🛒 Your cart is empty</div>';
@@ -780,7 +873,47 @@
         }
 
         // ============================================================
-        // 11. CHECKOUT
+        // 11. BOTTOM NAVIGATION FUNCTIONS
+        // ============================================================
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setActiveNav('home');
+        }
+
+        function scrollToMenu() {
+            var menu = document.getElementById('menuContainer');
+            if (menu) {
+                menu.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setActiveNav('menu');
+            }
+        }
+
+        function scrollToCart() {
+            var cart = document.getElementById('cartSection');
+            if (cart) {
+                cart.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setActiveNav('cart');
+            }
+        }
+
+        function scrollToContact() {
+            var contact = document.getElementById('contactSection');
+            if (contact) {
+                contact.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setActiveNav('contact');
+            }
+        }
+
+        function setActiveNav(activeId) {
+            var items = document.querySelectorAll('.bottom-nav .nav-item');
+            var names = ['home', 'menu', 'cart', 'contact'];
+            items.forEach(function(item, index) {
+                item.classList.toggle('active', names[index] === activeId);
+            });
+        }
+
+        // ============================================================
+        // 12. CHECKOUT
         // ============================================================
         function checkout() {
             if (cart.length === 0) {
@@ -865,7 +998,6 @@
                     </div>
                 `;
 
-            // Add animations
             var style = document.createElement('style');
             style.textContent = `
                     @keyframes fadeIn {
@@ -887,7 +1019,7 @@
         }
 
         // ============================================================
-        // 12. CLOSE CONFIRMATION
+        // 13. CLOSE CONFIRMATION
         // ============================================================
         function closeConfirmation() {
             var el = document.getElementById('confirmationModal');
@@ -895,14 +1027,14 @@
         }
 
         // ============================================================
-        // 13. START
+        // 14. START
         // ============================================================
         renderTabs();
         renderMenu();
         renderCart();
 
         // ============================================================
-        // 14. GOOGLE PLACES AUTOCOMPLETE
+        // 15. GOOGLE PLACES AUTOCOMPLETE
         // ============================================================
         var autocomplete;
 
@@ -941,7 +1073,7 @@
     </script>
 
     <!-- ===== GOOGLE PLACES API ===== -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDaj0a35GeLvHnnDIA4cofzY_ozz_39iis&libraries=places&callback=initAutocomplete" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&libraries=places&callback=initAutocomplete" async defer></script>
 
     <!-- ===== SERVICE WORKER ===== -->
     <script>
