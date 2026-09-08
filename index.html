@@ -1072,10 +1072,17 @@
         }
 
         function gm_authFailure() {
-            var status = document.getElementById('locationStatus');
-            status.textContent = '⚠️ Address search unavailable. Please enter address manually.';
-            status.style.color = '#e74c3c';
-        }
+    var status = document.getElementById('locationStatus');
+    status.textContent = '⚠️ Address search unavailable. Please enter address manually.';
+    status.style.color = '#e74c3c';
+    
+    // Clear the message when user starts typing
+    var input = document.getElementById('deliveryAddress');
+    input.addEventListener('input', function() {
+        var status = document.getElementById('locationStatus');
+        status.textContent = '';
+    });
+}
     </script>
 
     <!-- ===== GOOGLE PLACES API ===== -->
