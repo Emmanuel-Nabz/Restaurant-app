@@ -1394,7 +1394,26 @@ function placeOrder() {
             ">OK</button>
         </div>
     `;
-
+// ============================================================
+// CLOSE CONFIRMATION
+// ============================================================
+function closeConfirmation() {
+    var el = document.getElementById('confirmationModal');
+    if (el) {
+        el.remove();
+    }
+    // Also remove verification popup if it's still there
+    var popup = document.getElementById('verificationPopup');
+    if (popup) {
+        popup.remove();
+    }
+}
+function closeVerificationPopup() {
+    var popup = document.getElementById('verificationPopup');
+    if (popup) {
+        popup.remove();
+    }
+}
     document.body.appendChild(confirmation);
 
     cart = [];
