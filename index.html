@@ -853,31 +853,67 @@
         // ============================================================
         // 10. SHARE LOCATION
         // ============================================================
-        function shareLocation() {
-            var status = document.getElementById('locationStatus');
-            status.textContent = '📍 Getting your location...';
-            status.style.color = '#3498db';
+      function shareLocation() {
+    var status = document.getElementById('locationStatus');
+    var pasteBtn = document.getElementById('pasteBtn');
+    status.textContent = '📍 Getting your location...';
+    status.style.color = '#3498db';
 
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        var lat = position.coords.latitude;
-                        var lng = position.coords.longitude;
-                        window.open('https://www.google.com/maps?q=' + lat + ',' + lng, '_blank');
-                        status.textContent = '✅ Location shared! Please copy the address from Google Maps.';
-                        status.style.color = '#27ae60';
-                    },
-                    function(error) {
-                        status.textContent = '❌ Could not get location. Please enter your address manually.';
-                        status.style.color = '#e74c3c';
-                    }
-                );
-            } else {
-                status.textContent = '❌ Location not supported on this device.';
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                var mapsUrl = 'https://www.google.com/maps?q=' + lat + ',' + lng;
+                window.open(mapsUrl, '_blank');
+                status.textContent = '✅ Location opened in Google Maps. Copy the address and tap "Paste" below.';
+                status.style.color = '#27ae60';
+                
+                // Show the paste button
+                pasteBtn.style.display = 'flex';
+                
+                // Store the location for pasting
+                window.tempLocation = { lat: lat, lng: lng };
+            },
+            function(error) {
+                status.textContent = '❌ Could not get location. Please enter your address manually.';
                 status.style.color = '#e74c3c';
             }
-        }
+        );
+    } else {
+        status.textContent = '❌ Location not supported on this device.';
+        status.style.color = '#e74c3c';
+    }
+}
 
+function pasteAddress() {
+    var input = document.getElementById('deliveryAddress');
+    var status = document.getElementById('locationStatus');
+    var pasteBtn = document.getElementById('pasteBtn');
+    
+    // Try to get the address from clipboard
+    if (navigator.clipboard) {
+        navigator.clipboard.readText()
+            .then(function(text) {
+                if (text && text.length > 5) {
+                    input.value = text;
+                    status.textContent = '✅ Address pasted!';
+                    status.style.color = '#27ae60';
+                    pasteBtn.style.display = 'none';
+                } else {
+                    status.textContent = '📋 Please copy the address from Google Maps first, then tap Paste.';
+                    status.style.color = '#f39c12';
+                }
+            })
+            .catch(function() {
+                status.textContent = '📋 Please copy the address from Google Maps, then tap Paste.';
+                status.style.color = '#f39c12';
+            });
+    } else {
+        status.textContent = '📋 Please copy the address from Google Maps and paste it manually.';
+        status.style.color = '#f39c12';
+    }
+}
         // ============================================================
         // 11. BOTTOM NAVIGATION FUNCTIONS
         // ============================================================
