@@ -511,6 +511,7 @@
                 font-size: 1em;
                 padding: 12px;
             }
+            
         /* ============================================================
    QUANTITY BUTTONS
    ============================================================ */
@@ -558,7 +559,84 @@
     font-size: 1.2em;
     min-width: 24px;
     text-align: center;
-}    
+}
+/* ============================================================
+   CART QUANTITY BUTTONS
+   ============================================================ */
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed #ecf0f1;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.cart-item .item-name {
+    font-weight: 500;
+    font-size: 0.95em;
+    flex: 1;
+    min-width: 100px;
+}
+.cart-item .item-price {
+    color: #27ae60;
+    font-weight: 500;
+    min-width: 70px;
+    text-align: right;
+}
+.cart-item .qty-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+}
+.cart-item .qty-btn:hover {
+    transform: scale(1.1);
+}
+.cart-item .qty-btn:active {
+    transform: scale(0.9);
+}
+.cart-item .minus-btn {
+    background: #e74c3c;
+    color: white;
+}
+.cart-item .minus-btn:hover {
+    background: #c0392b;
+}
+.cart-item .add-btn-qty {
+    background: #27ae60;
+    color: white;
+}
+.cart-item .add-btn-qty:hover {
+    background: #1e8449;
+}
+.cart-item .qty-display {
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+}
+
+@media (max-width: 500px) {
+    .cart-item {
+        flex-wrap: wrap;
+    }
+    .cart-item .item-name {
+        width: 100%;
+        min-width: unset;
+    }
+    .cart-item .item-price {
+        text-align: left;
+        min-width: unset;
+    }
+}
+   
         }
     </style>
 
@@ -909,6 +987,43 @@
     });
 }
 // ============================================================
+// UPDATE CART QUANTITY (From Cart)
+// ============================================================
+function updateCartQuantity(id, change) {
+    var item = cart.find(function(i) { return i.id === id; });
+    if (!item) return;
+
+    var newQuantity = item.quantity + change;
+
+    if (newQuantity <= 0) {
+        // Remove from cart
+        cart = cart.filter(function(i) { return i.id !== id; });
+    } else {
+        item.quantity = newQuantity;
+    }
+
+    // Also update the menu quantity display if visible
+    var qtyDisplay = document.getElementById('qty-' + id);
+    var minusBtn = document.querySelector('#item-' + id + ' .minus-btn');
+    if (qtyDisplay) {
+        if (newQuantity > 0) {
+            qtyDisplay.textContent = newQuantity;
+            qtyDisplay.style.display = 'inline-block';
+        } else {
+            qtyDisplay.style.display = 'none';
+        }
+    }
+    if (minusBtn) {
+        if (newQuantity > 0) {
+            minusBtn.style.display = 'inline-flex';
+        } else {
+            minusBtn.style.display = 'none';
+        }
+    }
+
+    renderCart();
+}
+// ============================================================
 // UPDATE QUANTITY (Plus/Minus)
 // ============================================================
 function updateQuantity(id, change) {
@@ -1001,67 +1116,84 @@ function updateQuantity(id, change) {
         // ============================================================
         // 8. CLEAR CART
         // ============================================================
-        function clearCart() {
-            if (cart.length === 0) return;
-            if (confirm('Clear your entire order?')) {
-                cart = [];
-                renderCart();
-            }
+function renderCart() {
+    var cartContainer = document.getElementById('cartItems');
+    var subtotalSpan = document.getElementById('subtotal');
+    var grandTotalSpan = document.getElementById('grandTotal');
+    var badge = document.getElementById('cartBadge');
+    var navBadge = document.getElementById('navCartBadge');
+
+    var totalItems = 0;
+    for (var i = 0; i < cart.length; i++) {
+        totalItems += cart[i].quantity;
+    }
+    badge.textContent = totalItems;
+
+    if (navBadge) {
+        navBadge.textContent = totalItems;
+        if (totalItems === 0) {
+            navBadge.classList.remove('show');
+        } else {
+            navBadge.classList.add('show');
         }
+    }
 
-        // ============================================================
-        // 9. RENDER CART
-        // ============================================================
-        function renderCart() {
-            var cartContainer = document.getElementById('cartItems');
-            var subtotalSpan = document.getElementById('subtotal');
-            var grandTotalSpan = document.getElementById('grandTotal');
-            var badge = document.getElementById('cartBadge');
-            var navBadge = document.getElementById('navCartBadge');
+    if (cart.length === 0) {
+        cartContainer.innerHTML = '<div class="empty-cart">🛒 Your cart is empty</div>';
+        subtotalSpan.textContent = 'BD 0.00';
+        grandTotalSpan.textContent = 'BD 0.500';
+        return;
+    }
 
-            var totalItems = 0;
-            for (var i = 0; i < cart.length; i++) {
-                totalItems += cart[i].quantity;
-            }
-            badge.textContent = totalItems;
+    var html = '';
+    var subtotal = 0;
+    for (var i = 0; i < cart.length; i++) {
+        var itemTotal = cart[i].price * cart[i].quantity;
+        subtotal += itemTotal;
+        html += `
+            <div class="cart-item" id="cart-item-${cart[i].id}">
+                <span class="item-name">${cart[i].name}</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button class="qty-btn minus-btn" onclick="updateCartQuantity(${cart[i].id}, -1)" style="
+                        background: #e74c3c;
+                        color: white;
+                        border: none;
+                        width: 28px;
+                        height: 28px;
+                        border-radius: 50%;
+                        font-size: 1em;
+                        font-weight: bold;
+                        cursor: pointer;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                    ">−</button>
+                    <span style="font-weight: bold; min-width: 20px; text-align: center;">${cart[i].quantity}</span>
+                    <button class="qty-btn add-btn-qty" onclick="updateCartQuantity(${cart[i].id}, 1)" style="
+                        background: #27ae60;
+                        color: white;
+                        border: none;
+                        width: 28px;
+                        height: 28px;
+                        border-radius: 50%;
+                        font-size: 1em;
+                        font-weight: bold;
+                        cursor: pointer;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                    ">+</button>
+                    <span class="item-price">BD ${itemTotal.toFixed(2)}</span>
+                </div>
+            </div>
+        `;
+    }
+    cartContainer.innerHTML = html;
 
-            if (navBadge) {
-                navBadge.textContent = totalItems;
-                if (totalItems === 0) {
-                    navBadge.classList.remove('show');
-                } else {
-                    navBadge.classList.add('show');
-                }
-            }
-
-            if (cart.length === 0) {
-                cartContainer.innerHTML = '<div class="empty-cart">🛒 Your cart is empty</div>';
-                subtotalSpan.textContent = 'BD 0.00';
-                grandTotalSpan.textContent = 'BD 0.500';
-                return;
-            }
-
-            var html = '';
-            var subtotal = 0;
-            for (var i = 0; i < cart.length; i++) {
-                var itemTotal = cart[i].price * cart[i].quantity;
-                subtotal += itemTotal;
-                html += `
-                        <div class="cart-item">
-                            <span class="item-name">${cart[i].name} x${cart[i].quantity}</span>
-                            <span>
-                                <span class="item-price">BD ${itemTotal.toFixed(2)}</span>
-                                <button class="remove-btn" onclick="removeFromCart(${cart[i].id})">×</button>
-                            </span>
-                        </div>
-                    `;
-            }
-            cartContainer.innerHTML = html;
-
-            var grandTotal = subtotal + DELIVERY_FEE;
-            subtotalSpan.textContent = 'BD ' + subtotal.toFixed(2);
-            grandTotalSpan.textContent = 'BD ' + grandTotal.toFixed(2);
-        }
+    var grandTotal = subtotal + DELIVERY_FEE;
+    subtotalSpan.textContent = 'BD ' + subtotal.toFixed(2);
+    grandTotalSpan.textContent = 'BD ' + grandTotal.toFixed(2);
+}
 
         // ============================================================
         // 10. SHARE LOCATION
