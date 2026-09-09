@@ -511,6 +511,54 @@
                 font-size: 1em;
                 padding: 12px;
             }
+        /* ============================================================
+   QUANTITY BUTTONS
+   ============================================================ */
+.item-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+.qty-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+}
+.qty-btn:hover {
+    transform: scale(1.1);
+}
+.qty-btn:active {
+    transform: scale(0.9);
+}
+.minus-btn {
+    background: #e74c3c;
+    color: white;
+}
+.minus-btn:hover {
+    background: #c0392b;
+}
+.add-btn-qty {
+    background: #27ae60;
+    color: white;
+}
+.add-btn-qty:hover {
+    background: #1e8449;
+}
+.qty-display {
+    font-weight: bold;
+    font-size: 1.2em;
+    min-width: 24px;
+    text-align: center;
+}    
         }
     </style>
 
@@ -773,56 +821,141 @@
         // ============================================================
         // 5. RENDER MENU
         // ============================================================
-        function renderMenu() {
-            var container = document.getElementById('menuContainer');
-            container.innerHTML = '';
+      function renderMenu() {
+    var container = document.getElementById('menuContainer');
+    container.innerHTML = '';
 
-            var itemsToShow = [];
-            if (currentCategory === 'All') {
-                menuCategories.forEach(function(cat) {
-                    itemsToShow = itemsToShow.concat(cat.items);
-                });
-            } else {
-                var found = menuCategories.find(function(cat) { return cat.name === currentCategory; });
-                if (found) {
-                    itemsToShow = found.items;
-                }
+    var itemsToShow = [];
+    if (currentCategory === 'All') {
+        menuCategories.forEach(function(cat) {
+            itemsToShow = itemsToShow.concat(cat.items);
+        });
+    } else {
+        var found = menuCategories.find(function(cat) { return cat.name === currentCategory; });
+        if (found) {
+            itemsToShow = found.items;
+        }
+    }
+
+    if (itemsToShow.length === 0) {
+        container.innerHTML = '<div class="no-items">No items in this category</div>';
+        return;
+    }
+
+    itemsToShow.forEach(function(item) {
+        var div = document.createElement('div');
+        div.className = 'menu-item-large';
+        div.id = 'item-' + item.id;
+
+        var catIcon = '🍽️';
+        for (var c = 0; c < menuCategories.length; c++) {
+            var found = menuCategories[c].items.find(function(i) { return i.id === item.id; });
+            if (found) {
+                catIcon = menuCategories[c].icon;
+                break;
             }
-
-            if (itemsToShow.length === 0) {
-                container.innerHTML = '<div class="no-items">No items in this category</div>';
-                return;
-            }
-
-            itemsToShow.forEach(function(item) {
-                var div = document.createElement('div');
-                div.className = 'menu-item-large';
-                div.id = 'item-' + item.id;
-
-                var catIcon = '🍽️';
-                for (var c = 0; c < menuCategories.length; c++) {
-                    var found = menuCategories[c].items.find(function(i) { return i.id === item.id; });
-                    if (found) {
-                        catIcon = menuCategories[c].icon;
-                        break;
-                    }
-                }
-
-                div.innerHTML = `
-                        <img src="${item.image || 'https://via.placeholder.com/100'}" alt="${item.name}" class="item-image" onerror="this.src='https://via.placeholder.com/100?text=🍽️'">
-                        <div class="item-details">
-                            <h3>${catIcon} ${item.name}</h3>
-                            <div class="desc">${item.desc}</div>
-                            <div class="price">BD ${item.price.toFixed(2)}</div>
-                            <button class="add-btn" onclick="addToCart(${item.id})">
-                                <i class="fas fa-plus"></i> Add
-                            </button>
-                        </div>
-                    `;
-                container.appendChild(div);
-            });
         }
 
+        // Get current quantity in cart
+        var existing = cart.find(function(i) { return i.id === item.id; });
+        var qty = existing ? existing.quantity : 0;
+
+        div.innerHTML = `
+            <img src="${item.image || 'https://via.placeholder.com/100'}" alt="${item.name}" class="item-image" onerror="this.src='https://via.placeholder.com/100?text=🍽️'">
+            <div class="item-details">
+                <h3>${catIcon} ${item.name}</h3>
+                <div class="desc">${item.desc}</div>
+                <div class="price">BD ${item.price.toFixed(2)}</div>
+                <div class="item-actions" style="display: flex; align-items: center; gap: 10px; margin-top: 8px;">
+                    <button class="qty-btn minus-btn" onclick="updateQuantity(${item.id}, -1)" style="
+                        background: #e74c3c;
+                        color: white;
+                        border: none;
+                        width: 30px;
+                        height: 30px;
+                        border-radius: 50%;
+                        font-size: 1.2em;
+                        font-weight: bold;
+                        cursor: pointer;
+                        display: ${qty === 0 ? 'none' : 'inline-flex'};
+                        align-items: center;
+                        justify-content: center;
+                    ">−</button>
+                    <span class="qty-display" id="qty-${item.id}" style="
+                        font-weight: bold;
+                        font-size: 1.2em;
+                        min-width: 24px;
+                        text-align: center;
+                        display: ${qty === 0 ? 'none' : 'inline-block'};
+                    ">${qty}</span>
+                    <button class="qty-btn add-btn-qty" onclick="updateQuantity(${item.id}, 1)" style="
+                        background: #27ae60;
+                        color: white;
+                        border: none;
+                        width: 30px;
+                        height: 30px;
+                        border-radius: 50%;
+                        font-size: 1.2em;
+                        font-weight: bold;
+                        cursor: pointer;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                    ">+</button>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+// ============================================================
+// UPDATE QUANTITY (Plus/Minus)
+// ============================================================
+function updateQuantity(id, change) {
+    var item = null;
+    for (var c = 0; c < menuCategories.length; c++) {
+        var found = menuCategories[c].items.find(function(i) { return i.id === id; });
+        if (found) {
+            item = found;
+            break;
+        }
+    }
+    if (!item) return;
+
+    var existing = cart.find(function(i) { return i.id === id; });
+    var newQuantity = existing ? existing.quantity + change : change;
+
+    if (newQuantity <= 0) {
+        // Remove from cart
+        cart = cart.filter(function(i) { return i.id !== id; });
+    } else if (existing) {
+        existing.quantity = newQuantity;
+    } else {
+        cart.push({ id: item.id, name: item.name, price: item.price, quantity: 1 });
+    }
+
+    // Update display
+    var qtyDisplay = document.getElementById('qty-' + id);
+    var minusBtn = document.querySelector('#item-' + id + ' .minus-btn');
+    
+    if (qtyDisplay) {
+        if (newQuantity > 0) {
+            qtyDisplay.textContent = newQuantity;
+            qtyDisplay.style.display = 'inline-block';
+        } else {
+            qtyDisplay.style.display = 'none';
+        }
+    }
+    if (minusBtn) {
+        if (newQuantity > 0) {
+            minusBtn.style.display = 'inline-flex';
+        } else {
+            minusBtn.style.display = 'none';
+        }
+    }
+
+    renderCart();
+}
         // ============================================================
         // 6. ADD TO CART
         // ============================================================
