@@ -1327,25 +1327,34 @@ function scrollToOrders() {
         // 12. CHECKOUT
         // ============================================================
     function checkout() {
+    console.log("✅ checkout() called"); // Debug log
+
     if (cart.length === 0) {
         alert('🛒 Your cart is empty! Add some items first.');
         return;
     }
 
     var name = document.getElementById('customerName').value;
-    var countryCode = document.getElementById('countryCode').value;
+    
+    // Get country code safely
+    var countryCodeElement = document.getElementById('countryCode');
+    var countryCode = countryCodeElement ? countryCodeElement.value : '+973';
+    
     var phoneNumber = document.getElementById('customerPhone').value;
     var phone = countryCode + phoneNumber;
     var address = document.getElementById('deliveryAddress').value;
     var payment = document.getElementById('paymentMethod').value;
 
+    console.log("📝 Name:", name);
+    console.log("📱 Phone:", phone);
+    console.log("📍 Address:", address);
+
     if (!name) { alert('👤 Please enter your full name.'); return; }
     if (!phoneNumber) { alert('📱 Please enter your phone number.'); return; }
     if (!address) { alert('📍 Please enter your delivery address.'); return; }
 
-    // ===== CHECK IF PHONE IS ALREADY VERIFIED =====
+    // Check if phone is already verified
     if (isPhoneVerified(phone)) {
-        // Skip OTP verification
         var confirmOrder = confirm('✅ Your phone number ' + phone + ' is already verified.\n\nPlace order now?');
         if (confirmOrder) {
             window.tempOrderData = { name, phone, address, payment };
@@ -1353,6 +1362,9 @@ function scrollToOrders() {
         }
         return;
     }
+
+    // Show verification popup
+    showVerificationPopup(name, phone, address, payment);
 }
         // ============================================================
         // VERIFICATION POPUP
