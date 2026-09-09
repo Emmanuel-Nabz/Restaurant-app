@@ -768,24 +768,28 @@
 
     <!-- ===== BOTTOM NAVIGATION BAR ===== -->
     <div class="bottom-nav">
-        <button class="nav-item active" onclick="scrollToTop()">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </button>
-        <button class="nav-item" onclick="scrollToMenu()">
-            <i class="fas fa-utensils"></i>
-            <span>Menu</span>
-        </button>
-        <button class="nav-item" onclick="scrollToCart()">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Cart</span>
-            <span class="badge" id="navCartBadge"></span>
-        </button>
-        <button class="nav-item" onclick="scrollToContact()">
-            <i class="fas fa-envelope"></i>
-            <span>Contact</span>
-        </button>
-    </div>
+    <button class="nav-item active" onclick="scrollToTop()">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </button>
+    <button class="nav-item" onclick="scrollToMenu()">
+        <i class="fas fa-utensils"></i>
+        <span>Menu</span>
+    </button>
+    <button class="nav-item" onclick="scrollToCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Cart</span>
+        <span class="badge" id="navCartBadge"></span>
+    </button>
+    <button class="nav-item" onclick="showOrderHistory()">
+        <i class="fas fa-clock-rotate-left"></i>
+        <span>Orders</span>
+    </button>
+    <button class="nav-item" onclick="scrollToContact()">
+        <i class="fas fa-envelope"></i>
+        <span>Contact</span>
+    </button>
+</div>
 
     <!-- ============================================================
     JAVASCRIPT
@@ -1286,14 +1290,16 @@ function renderCart() {
                 setActiveNav('contact');
             }
         }
-
+function scrollToOrders() {
+    showOrderHistory();
+}
         function setActiveNav(activeId) {
-            var items = document.querySelectorAll('.bottom-nav .nav-item');
-            var names = ['home', 'menu', 'cart', 'contact'];
-            items.forEach(function(item, index) {
-                item.classList.toggle('active', names[index] === activeId);
-            });
-        }
+    var items = document.querySelectorAll('.bottom-nav .nav-item');
+    var names = ['home', 'menu', 'cart', 'orders', 'contact'];
+    items.forEach(function(item, index) {
+        item.classList.toggle('active', names[index] === activeId);
+    });
+}
 
         // ============================================================
         // 12. CHECKOUT
@@ -1594,6 +1600,25 @@ function renderCart() {
                 orderSummary += cart[i].quantity + "x " + cart[i].name + " - BD " + itemTotal.toFixed(2) + "\n";
             }
             var grandTotal = subtotal + DELIVERY_FEE;
+            // ===== SAVE ORDER HISTORY =====
+var order = {
+    id: Date.now(),
+    date: new Date().toLocaleString(),
+    name: name,
+    phone: phone,
+    address: address,
+    payment: payment,
+    items: JSON.parse(JSON.stringify(cart)),
+    subtotal: subtotal,
+    deliveryFee: DELIVERY_FEE,
+    total: grandTotal,
+    status: 'Pending'
+};
+
+// Get existing orders from localStorage
+var orders = JSON.parse(localStorage.getItem('nabzOrders')) || [];
+orders.unshift(order); // Add to beginning
+localStorage.setItem('nabzOrders', JSON.stringify(orders));
 
             var form = document.createElement('form');
             form.method = 'POST';
@@ -1697,7 +1722,127 @@ function renderCart() {
                 popup.remove();
             }
         }
+// ============================================================
+// ORDER HISTORY FUNCTIONS
+// ============================================================
 
+function showOrderHistory() {
+    var orders = JSON.parse(localStorage.getItem('nabzOrders')) || [];
+
+    if (orders.length === 0) {
+        alert('📋 You have no order history yet.');
+        return;
+    }
+
+    var container = document.createElement('div');
+    container.id = 'orderHistoryModal';
+    container.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10001;
+        animation: fadeIn 0.3s;
+        padding: 20px;
+        overflow-y: auto;
+    `;
+
+    var html = `
+        <div style="
+            background: white;
+            border-radius: 20px;
+            padding: 30px 25px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: bounceIn 0.4s;
+            position: relative;
+        ">
+            <button onclick="closeOrderHistory()" style="
+                position: sticky;
+                top: 0;
+                float: right;
+                background: none;
+                border: none;
+                font-size: 1.5em;
+                color: #95a5a6;
+                cursor: pointer;
+                z-index: 1;
+            ">×</button>
+
+            <h2 style="color: #2c3e50; margin-bottom: 15px;">
+                <i class="fas fa-clock-rotate-left"></i> Order History
+            </h2>
+    `;
+
+    if (orders.length === 0) {
+        html += <p style="color: #95a5a6; text-align: center; padding: 30px 0;">No orders yet</p>;
+    } else {
+        orders.forEach(function(order) {
+            var statusColor = order.status === 'Completed' ? '#27ae60' : '#f39c12';
+            var statusIcon = order.status === 'Completed' ? '✅' : '⏳';
+            
+            html += `
+                <div style="
+                    background: #f8f9fa;
+                    border-radius: 12px;
+                    padding: 15px;
+                    margin-bottom: 12px;
+                    border-left: 4px solid ${statusColor};
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: bold; font-size: 0.9em;">Order #${String(order.id).slice(-6)}</span>
+                        <span style="font-size: 0.8em; color: ${statusColor}; font-weight: bold;">${statusIcon} ${order.status}</span>
+                    </div>
+                    <div style="font-size: 0.85em; color: #2c3e50; margin: 5px 0;">
+                        ${order.items.map(function(item) {
+                            return item.quantity + 'x ' + item.name;
+                        }).join(', ')}
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                        <span style="font-size: 0.8em; color: #95a5a6;">
+                            <i class="fas fa-calendar"></i> ${order.date}
+                        </span>
+                        <span style="font-weight: bold; color: #27ae60;">
+                            BD ${order.total.toFixed(2)}
+                        </span>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    html += `
+            <button onclick="closeOrderHistory()" style="
+                background: #3498db;
+                color: white;
+                border: none;
+                padding: 12px;
+                border-radius: 30px;
+                font-size: 1em;
+                font-weight: bold;
+                width: 100%;
+                cursor: pointer;
+                margin-top: 10px;
+            ">Close</button>
+        </div>
+    `;
+
+    container.innerHTML = html;
+    document.body.appendChild(container);
+}
+
+function closeOrderHistory() {
+    var modal = document.getElementById('orderHistoryModal');
+    if (modal) modal.remove();
+}
         // ============================================================
         // START
         // ============================================================
