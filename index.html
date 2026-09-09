@@ -663,6 +663,17 @@
         <i class="fas fa-clock-rotate-left"></i> View Orders
     </button>
 </div>
+<button onclick="clearVerifiedPhones()" style="
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8em;
+">
+    <i class="fas fa-trash"></i> Clear Verified Numbers
+</button>
 
     <!-- ===== CATEGORY TABS ===== -->
     <div class="category-tabs" id="categoryTabs"></div>
@@ -1315,25 +1326,34 @@ function scrollToOrders() {
         // ============================================================
         // 12. CHECKOUT
         // ============================================================
-        function checkout() {
-            if (cart.length === 0) {
-                alert('🛒 Your cart is empty! Add some items first.');
-                return;
-            }
-            var name = document.getElementById('customerName').value;
-            var countryCode = document.getElementById('countryCode').value;
-            var phoneNumber = document.getElementById('customerPhone').value;
-            var phone = countryCode + phoneNumber
-            var address = document.getElementById('deliveryAddress').value;
-            var payment = document.getElementById('paymentMethod').value;
+    function checkout() {
+    if (cart.length === 0) {
+        alert('🛒 Your cart is empty! Add some items first.');
+        return;
+    }
 
-            if (!name) { alert('👤 Please enter your full name.'); return; }
-            if (!phone) { alert('📱 Please enter your phone number.'); return; }
-            if (!address) { alert('📍 Please enter your delivery address.'); return; }
+    var name = document.getElementById('customerName').value;
+    var countryCode = document.getElementById('countryCode').value;
+    var phoneNumber = document.getElementById('customerPhone').value;
+    var phone = countryCode + phoneNumber;
+    var address = document.getElementById('deliveryAddress').value;
+    var payment = document.getElementById('paymentMethod').value;
 
-            showVerificationPopup(name, phone, address, payment);
+    if (!name) { alert('👤 Please enter your full name.'); return; }
+    if (!phoneNumber) { alert('📱 Please enter your phone number.'); return; }
+    if (!address) { alert('📍 Please enter your delivery address.'); return; }
+
+    // ===== CHECK IF PHONE IS ALREADY VERIFIED =====
+    if (isPhoneVerified(phone)) {
+        // Skip OTP verification
+        var confirmOrder = confirm('✅ Your phone number ' + phone + ' is already verified.\n\nPlace order now?');
+        if (confirmOrder) {
+            window.tempOrderData = { name, phone, address, payment };
+            placeOrder();
         }
-
+        return;
+    }
+}
         // ============================================================
         // VERIFICATION POPUP
         // ============================================================
@@ -1573,6 +1593,11 @@ function scrollToOrders() {
             if (parseInt(code) === window.tempCode) {
                 status.textContent = '✅ Verified! Placing your order...';
                 status.style.color = '#27ae60';
+                // ===== SAVE VERIFIED PHONE NUMBER =====
+        var phone = window.tempOrderData ? window.tempOrderData.phone : '';
+        if (phone) {
+            saveVerifiedPhone(phone);
+        }
 
                 setTimeout(function() {
                     closeVerificationPopup();
@@ -1590,7 +1615,32 @@ function scrollToOrders() {
                 }
             }
         }
+// ============================================================
+// CHECK IF PHONE NUMBER IS VERIFIED
+// ============================================================
 
+function isPhoneVerified(phone) {
+    var verifiedPhones = JSON.parse(localStorage.getItem('verifiedPhones')) || [];
+    return verifiedPhones.includes(phone);
+}
+
+function saveVerifiedPhone(phone) {
+    var verifiedPhones = JSON.parse(localStorage.getItem('verifiedPhones')) || [];
+    if (!verifiedPhones.includes(phone)) {
+        verifiedPhones.push(phone);
+        localStorage.setItem('verifiedPhones', JSON.stringify(verifiedPhones));
+    }
+}
+// ============================================================
+// CLEAR VERIFIED PHONES (FOR TESTING)
+// ============================================================
+
+function clearVerifiedPhones() {
+    if (confirm('Clear all verified phone numbers?')) {
+        localStorage.removeItem('verifiedPhones');
+        alert('✅ Verified numbers cleared!');
+    }
+}
         // ============================================================
         // PLACE ORDER
         // ============================================================
