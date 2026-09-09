@@ -1291,13 +1291,13 @@ function renderCart() {
             }
         }
 
-       function setActiveNav(activeId) {
-    var items = document.querySelectorAll('.bottom-nav .nav-item');
-    var names = ['home', 'menu', 'cart', 'orders', 'contact'];
-    items.forEach(function(item, index) {
-        item.classList.toggle('active', names[index] === activeId);
-    });
-}
+        function setActiveNav(activeId) {
+            var items = document.querySelectorAll('.bottom-nav .nav-item');
+            var names = ['home', 'menu', 'cart', 'contact'];
+            items.forEach(function(item, index) {
+                item.classList.toggle('active', names[index] === activeId);
+            });
+        }
 
         // ============================================================
         // 12. CHECKOUT
