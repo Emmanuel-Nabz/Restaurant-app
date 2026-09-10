@@ -479,7 +479,30 @@
     border-color: #3498db;
     outline: none;
 }
+/* ===== CUSTOMER LOGIN BUTTONS ===== */
+#customerLoginSection #loginPrompt button {
+    display: inline-block;
+    margin: 5px 5px 5px 0;
+    white-space: nowrap;
+}
 
+@media (max-width: 480px) {
+    #customerLoginSection {
+        padding: 15px !important;
+    }
+    #customerLoginSection h3 {
+        font-size: 1.1em !important;
+    }
+    #customerLoginSection p {
+        font-size: 0.85em !important;
+    }
+    #customerLoginSection #loginPrompt button {
+        display: block;
+        width: 100%;
+        margin: 8px 0;
+        text-align: center;
+    }
+}
         /* ============================================================
            RESPONSIVE
            ============================================================ */
