@@ -66,13 +66,27 @@
         /* ============================================================
            CATEGORY TABS
            ============================================================ */
-        .category-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 25px;
-            justify-content: center;
-        }
+       .category-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-bottom: 25px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    justify-content: flex-start;
+    position: relative;
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+.category-tabs::-webkit-scrollbar {
+    display: none;
+}
+.category-tab {
+    flex-shrink: 0;
+}
         .category-tab {
             padding: 10px 20px;
             border-radius: 30px;
