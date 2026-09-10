@@ -456,6 +456,29 @@
         .bottom-nav .nav-item .badge.show {
             display: inline;
         }
+        /* ===== CUSTOMER LOGIN ===== */
+#customerLoginSection .form-group {
+    margin: 15px 0;
+}
+#customerLoginSection .form-group label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+    color: #2c3e50;
+    font-size: 0.9em;
+}
+#customerLoginSection .input-field {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    font-size: 1em;
+}
+#customerLoginSection .input-field:focus {
+    border-color: #3498db;
+    outline: none;
+}
 
         /* ============================================================
            RESPONSIVE
@@ -671,6 +694,55 @@
 
 
     <!-- ===== CATEGORY TABS ===== -->
+     <!-- ===== CUSTOMER LOGIN SECTION ===== -->
+<div id="customerLoginSection" style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">
+    <div id="loginPrompt">
+        <h3 style="color: #2c3e50; margin-bottom: 10px;">👤 Welcome!</h3>
+        <p style="color: #7f8c8d; font-size: 0.9em; margin-bottom: 15px;">Sign in to save your details for faster checkout</p>
+        <button onclick="showCustomerLogin()" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: 600; cursor: pointer;">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+        </button>
+        <button onclick="showCustomerRegister()" style="background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; margin-left: 10px;">
+            <i class="fas fa-user-plus"></i> Create Account
+        </button>
+    </div>
+
+    <div id="customerLoginForm" style="display: none;">
+        <h3 style="color: #2c3e50; margin-bottom: 15px;">Sign In</h3>
+        <div class="form-group">
+            <label><i class="fas fa-phone"></i> Phone Number</label>
+            <input type="tel" id="custLoginPhone" class="input-field" placeholder="Enter phone number">
+        </div>
+        <button onclick="customerLogin()" style="background: #3498db; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 600; cursor: pointer;">Sign In</button>
+        <button onclick="hideCustomerLogin()" style="background: #95a5a6; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; margin-left: 10px;">Cancel</button>
+        <div id="custLoginError" style="color: #e74c3c; margin-top: 10px;"></div>
+    </div>
+
+    <div id="customerRegisterForm" style="display: none;">
+        <h3 style="color: #2c3e50; margin-bottom: 15px;">Create Account</h3>
+        <div class="form-group">
+            <label><i class="fas fa-user"></i> Full Name</label>
+            <input type="text" id="custRegName" class="input-field" placeholder="Enter your name">
+        </div>
+        <div class="form-group">
+            <label><i class="fas fa-phone"></i> Phone Number</label>
+            <input type="tel" id="custRegPhone" class="input-field" placeholder="Enter phone number">
+        </div>
+        <div class="form-group">
+            <label><i class="fas fa-map-pin"></i> Delivery Address</label>
+            <input type="text" id="custRegAddress" class="input-field" placeholder="Enter address">
+        </div>
+        <button onclick="customerRegister()" style="background: #27ae60; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 600; cursor: pointer;">Create Account</button>
+        <button onclick="hideCustomerLogin()" style="background: #95a5a6; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; margin-left: 10px;">Cancel</button>
+        <div id="custRegError" style="color: #e74c3c; margin-top: 10px;"></div>
+    </div>
+
+    <div id="customerWelcome" style="display: none;">
+        <h3 style="color: #27ae60; margin-bottom: 5px;">👋 Welcome back!</h3>
+        <p id="welcomeName" style="color: #2c3e50; font-weight: 600;"></p>
+        <button onclick="customerLogout()" style="background: #e74c3c; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; margin-top: 10px;">Logout</button>
+    </div>
+</div>
     <div class="category-tabs" id="categoryTabs"></div>
 
     <!-- ===== MENU ===== -->
@@ -919,6 +991,114 @@ function loadMenuFromStorage() {
 
 // Load menu when app starts
 loadMenuFromStorage();
+// ============================================================
+// CUSTOMER LOGIN SYSTEM
+// ============================================================
+
+function showCustomerLogin() {
+    document.getElementById('loginPrompt').style.display = 'none';
+    document.getElementById('customerRegisterForm').style.display = 'none';
+    document.getElementById('customerLoginForm').style.display = 'block';
+}
+
+function showCustomerRegister() {
+    document.getElementById('loginPrompt').style.display = 'none';
+    document.getElementById('customerLoginForm').style.display = 'none';
+    document.getElementById('customerRegisterForm').style.display = 'block';
+}
+
+function hideCustomerLogin() {
+    document.getElementById('customerLoginForm').style.display = 'none';
+    document.getElementById('customerRegisterForm').style.display = 'none';
+    document.getElementById('loginPrompt').style.display = 'block';
+}
+
+function customerLogin() {
+    var phone = document.getElementById('custLoginPhone').value.trim();
+    var errorEl = document.getElementById('custLoginError');
+    errorEl.textContent = '';
+
+    if (!phone) {
+        errorEl.textContent = '❌ Please enter your phone number.';
+        return;
+    }
+
+    var customers = JSON.parse(localStorage.getItem('nabzCustomers')) || [];
+    var customer = customers.find(function(c) { return c.phone === phone; });
+
+    if (!customer) {
+        errorEl.textContent = '❌ No account found. Please create one.';
+        return;
+    }
+
+    // Save logged-in customer
+    localStorage.setItem('nabzCurrentCustomer', JSON.stringify(customer));
+    showCustomerWelcome(customer);
+    prefillCustomerDetails(customer);
+}
+
+function customerRegister() {
+    var name = document.getElementById('custRegName').value.trim();
+    var phone = document.getElementById('custRegPhone').value.trim();
+    var address = document.getElementById('custRegAddress').value.trim();
+    var errorEl = document.getElementById('custRegError');
+    errorEl.textContent = '';
+
+    if (!name) { errorEl.textContent = '❌ Please enter your name.'; return; }
+    if (!phone) { errorEl.textContent = '❌ Please enter your phone number.'; return; }
+    if (!address) { errorEl.textContent = '❌ Please enter your address.'; return; }
+
+    var customers = JSON.parse(localStorage.getItem('nabzCustomers')) || [];
+
+    if (customers.find(function(c) { return c.phone === phone; })) {
+        errorEl.textContent = '❌ Phone number already registered. Please sign in.';
+        return;
+    }
+
+    var customer = { name: name, phone: phone, address: address, created: new Date().toLocaleString() };
+    customers.push(customer);
+    localStorage.setItem('nabzCustomers', JSON.stringify(customers));
+    localStorage.setItem('nabzCurrentCustomer', JSON.stringify(customer));
+
+    showCustomerWelcome(customer);
+    prefillCustomerDetails(customer);
+}
+
+function showCustomerWelcome(customer) {
+    document.getElementById('loginPrompt').style.display = 'none';
+    document.getElementById('customerLoginForm').style.display = 'none';
+    document.getElementById('customerRegisterForm').style.display = 'none';
+    document.getElementById('customerWelcome').style.display = 'block';
+    document.getElementById('welcomeName').textContent = '👤 ' + customer.name;
+}
+
+function prefillCustomerDetails(customer) {
+    document.getElementById('customerName').value = customer.name;
+    document.getElementById('customerPhone').value = customer.phone;
+    document.getElementById('deliveryAddress').value = customer.address;
+}
+
+function customerLogout() {
+    if (confirm('Logout?')) {
+        localStorage.removeItem('nabzCurrentCustomer');
+        document.getElementById('customerWelcome').style.display = 'none';
+        document.getElementById('loginPrompt').style.display = 'block';
+        document.getElementById('customerName').value = '';
+        document.getElementById('customerPhone').value = '';
+        document.getElementById('deliveryAddress').value = '';
+    }
+}
+
+function checkCustomerLogin() {
+    var customer = JSON.parse(localStorage.getItem('nabzCurrentCustomer'));
+    if (customer) {
+        showCustomerWelcome(customer);
+        prefillCustomerDetails(customer);
+    }
+}
+
+// Run on page load
+checkCustomerLogin();
         // ============================================================
         // 3. RENDER TABS
         // ============================================================
@@ -1868,10 +2048,11 @@ function closeOrderHistory() {
         // ============================================================
         // START
         // ============================================================
-       loadMenuFromStorage();
-renderTabs();
-renderMenu();
-renderCart();
+        checkCustomerLogin();
+        loadMenuFromStorage();
+        renderTabs();
+        renderMenu();
+        renderCart();
         // ============================================================
         // GOOGLE PLACES AUTOCOMPLETE
         // ============================================================
