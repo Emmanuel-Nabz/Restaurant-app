@@ -710,6 +710,24 @@
         font-size: 1.05em;
     }
 }
+/* Make login buttons side by side on mobile */
+@media (max-width: 600px) {
+    #customerLoginSection #loginPrompt {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    #customerLoginSection #loginPrompt h3,
+    #customerLoginSection #loginPrompt p {
+        width: 100%;
+    }
+    #customerLoginSection #loginPrompt button {
+        flex: 1;
+        padding: 10px;
+        font-size: 0.85em;
+        white-space: nowrap;
+    }
+}
             
         /* ============================================================
    QUANTITY BUTTONS
