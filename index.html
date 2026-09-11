@@ -1091,7 +1091,27 @@
         // ============================================================
         const DELIVERY_FEE = 0.500;
         let currentCategory = 'All';
-        let cart = [];
+        // ============================================================
+// CART (PERSISTENT)
+// ============================================================
+let cart = [];
+
+// Load cart from localStorage on page start
+function loadCart() {
+    try {
+        var saved = JSON.parse(localStorage.getItem('nabzCart'));
+        if (Array.isArray(saved)) {
+            cart = saved;
+        }
+    } catch (e) {
+        cart = [];
+    }
+}
+
+// Save cart to localStorage whenever it changes
+function saveCart() {
+    localStorage.setItem('nabzCart', JSON.stringify(cart));
+}
 
         // ============================================================
         // 2. MENU DATA
@@ -1431,6 +1451,7 @@ function updateCartQuantity(id, change) {
             minusBtn.style.display = 'none';
         }
     }
+    saveCart();
 
     renderCart();
 }
@@ -1479,6 +1500,7 @@ function updateQuantity(id, change) {
             minusBtn.style.display = 'none';
         }
     }
+    saveCart();
 
     renderCart();
 }
@@ -1512,6 +1534,7 @@ function updateQuantity(id, change) {
                     btn.classList.remove('added');
                 }, 1000);
             }
+            saveCart();
 
             renderCart();
         }
@@ -1521,6 +1544,7 @@ function updateQuantity(id, change) {
         // ============================================================
         function removeFromCart(id) {
             cart = cart.filter(function(item) { return item.id !== id; });
+            saveCart();
             renderCart();
         }
 
@@ -2038,6 +2062,14 @@ function clearVerifiedPhones() {
         alert('✅ Verified numbers cleared!');
     }
 }
+function clearCart() {
+    if (cart.length === 0) return;
+    if (confirm('Clear your entire order?')) {
+        cart = [];
+        saveCart();       // ← ADD THIS
+        renderCart();
+    }
+}
         // ============================================================
         // PLACE ORDER
         // ============================================================
@@ -2263,6 +2295,7 @@ function loadFavorites() {
         loadMenuFromStorage();
         renderTabs();
         renderMenu();
+        loadCart();
         renderCart();
         loadFavorites();
         // ============================================================
