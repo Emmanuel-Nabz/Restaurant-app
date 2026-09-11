@@ -171,7 +171,10 @@
         /* ============================================================
            MENU ITEMS
            ============================================================ */
-        .menu-item-large {
+       /* ============================================================
+   MENU ITEM CARD
+   ============================================================ */
+.menu-item-large {
     display: flex;
     gap: 14px;
     background: white;
@@ -183,11 +186,13 @@
     align-items: center;
     transition: all 0.3s;
 }
-        .menu-item-large:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        }
-        .menu-item-large .item-image {
+.menu-item-large:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== IMAGE ===== */
+.menu-item-large .item-image {
     flex-shrink: 0;
     width: 80px;
     height: 80px;
@@ -195,7 +200,9 @@
     object-fit: cover;
     background: #ecf0f1;
 }
-        .menu-item-large .item-details {
+
+/* ===== TEXT DETAILS ===== */
+.menu-item-large .item-details {
     flex: 1;
     min-width: 0;
     display: flex;
@@ -216,39 +223,63 @@
     margin: 0;
     line-height: 1.3;
 }
+
+/* ===== PRICE + QTY ROW (same line) ===== */
+.menu-item-large .item-details .price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 6px;
+}
 .menu-item-large .item-details .price {
     font-weight: bold;
     color: #129649;
-    font-size: 1em;
+    font-size: 1.05em;
     margin: 0;
 }
-        .menu-item-large .add-btn {
+.menu-item-large .item-details .item-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+/* ===== QTY BUTTONS ===== */
+.menu-item-large .qty-btn {
     background: #27ae60;
     color: white;
     border: none;
-    padding: 4px 10px;
-    border-radius: 12px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 1em;
+    font-weight: bold;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 0.7em;
-    transition: background 0.2s;
-    margin-top: 3px;
-    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     line-height: 1;
-    min-width: 40px;
+    transition: background 0.2s, transform 0.15s;
+    padding: 0;
 }
-.menu-item-large .add-btn:hover {
+.menu-item-large .qty-btn:hover {
     background: #1e8449;
+    transform: scale(1.08);
 }
-.menu-item-large .add-btn:hover {
-    background: #1e8449;
+.menu-item-large .minus-btn {
+    background: #e74c3c;
 }
-        .menu-item-large .add-btn:hover {
-            background: #2980b9;
-        }
-        .menu-item-large .add-btn.added {
-            background: #27ae60;
-        }
+.menu-item-large .minus-btn:hover {
+    background: #c0392b;
+}
+.menu-item-large .qty-display {
+    font-weight: bold;
+    font-size: 1em;
+    min-width: 20px;
+    text-align: center;
+    color: #2c3e50;
+}
 
         /* ============================================================
            CART SECTION
@@ -1301,50 +1332,24 @@ checkCustomerLogin();
         var qty = existing ? existing.quantity : 0;
 
         div.innerHTML = `
-            <img src="${item.image || 'https://via.placeholder.com/100'}" alt="${item.name}" class="item-image" onerror="this.src='https://via.placeholder.com/100?text=🍽️'">
-            <div class="item-details">
-                <h3>${catIcon} ${item.name}</h3>
-                <div class="desc">${item.desc}</div>
-                <div class="price">BD ${item.price.toFixed(2)}</div>
-                <div class="item-actions" style="display: flex; align-items: center; gap: 10px; margin-top: 8px;">
-                    <button class="qty-btn minus-btn" onclick="updateQuantity(${item.id}, -1)" style="
-                        background: #e74c3c;
-                        color: white;
-                        border: none;
-                        width: 30px;
-                        height: 30px;
-                        border-radius: 50%;
-                        font-size: 1.2em;
-                        font-weight: bold;
-                        cursor: pointer;
-                        display: ${qty === 0 ? 'none' : 'inline-flex'};
-                        align-items: center;
-                        justify-content: center;
-                    ">−</button>
-                    <span class="qty-display" id="qty-${item.id}" style="
-                        font-weight: bold;
-                        font-size: 1.2em;
-                        min-width: 24px;
-                        text-align: center;
-                        display: ${qty === 0 ? 'none' : 'inline-block'};
-                    ">${qty}</span>
-                    <button class="qty-btn add-btn-qty" onclick="updateQuantity(${item.id}, 1)" style="
-                        background: #27ae60;
-                        color: white;
-                        border: none;
-                        width: 30px;
-                        height: 30px;
-                        border-radius: 50%;
-                        font-size: 1.2em;
-                        font-weight: bold;
-                        cursor: pointer;
-                        display: inline-flex;
-                        align-items: center;
-                        justify-content: center;
-                    ">+</button>
-                </div>
+    <img src="${item.image || 'https://via.placeholder.com/100'}" alt="${item.name}" class="item-image" onerror="this.src='https://via.placeholder.com/100?text=🍽️'">
+    <div class="item-details">
+        <h3>${catIcon} ${item.name}</h3>
+        <div class="desc">${item.desc}</div>
+        <div class="price-row">
+            <div class="price">BD ${item.price.toFixed(2)}</div>
+            <div class="item-actions">
+                <button class="qty-btn minus-btn" onclick="updateQuantity(${item.id}, -1)" style="
+                    display: ${qty === 0 ? 'none' : 'inline-flex'};
+                ">−</button>
+                <span class="qty-display" id="qty-${item.id}" style="
+                    display: ${qty === 0 ? 'none' : 'inline-block'};
+                ">${qty}</span>
+                <button class="qty-btn add-btn-qty" onclick="updateQuantity(${item.id}, 1)">+</button>
             </div>
-        `;
+        </div>
+    </div>
+`;
         container.appendChild(div);
     });
 }
