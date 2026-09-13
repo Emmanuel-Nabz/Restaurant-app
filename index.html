@@ -1201,7 +1201,7 @@ function saveCart() {
 var menuCategories = [];
 
 function loadMenuFromStorage() {
-    fetch('http://localhost:3000/api/menu')
+    fetch('https://api.nabztech.com/api/menu')
         .then(function(response) { return response.json(); })
         .then(function(data) {
             console.log('✅ Menu loaded from API:', data);
@@ -1278,7 +1278,7 @@ function customerLogin() {
         return;
     }
 
-    fetch('http://localhost:3000/api/customers')
+    fetch('https://api.nabztech.com/api/customers')
         .then(function(response) { return response.json(); })
         .then(function(customers) {
             var customer = customers.find(function(c) { return c.phone === phone; });
@@ -1310,7 +1310,7 @@ function customerRegister() {
     if (!address) { errorEl.textContent = '❌ Please enter your address.'; return; }
 
     // Send to backend API
-    fetch('http://localhost:3000/api/customers', {
+    fetch('https://api.nabztech.com/api/customers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -2175,7 +2175,7 @@ function clearCart() {
     }
 
     // ===== SEND ORDER TO BACKEND API =====
-    fetch('http://localhost:3000/api/orders', {
+    fetch('https://api.nabztech.com/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -2442,7 +2442,7 @@ function loadFavorites() {
     </script>
 
     <!-- ===== GOOGLE PLACES API ===== -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDaj0a35GeLvHnnDIA4cofzY_ozz_39iis&libraries=places&callback=initAutocomplete" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQJlGOj-bHTmrw88BV6jXH-ZDA3sOx4x4&libraries=places&callback=initAutocomplete" async defer></script>
 
     <!-- ===== SERVICE WORKER ===== -->
     <script>
